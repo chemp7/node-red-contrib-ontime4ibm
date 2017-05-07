@@ -1,0 +1,30 @@
+{
+  "name": "node-red-ogc",
+  "version": "0.0.1",
+  "description": "This collection of Node-RED nodes is for OnTime Group Calendar API.",
+  "author": "Takeshi Yoshida",
+  "bugs": {
+    "url": "https://github.com/chemp7/node-red-ontime-group-calendar/issues"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/chemp7/node-red-ontime-group-calendar#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chemp7/node-red-ogc.git"
+  },
+  "keywords": [ "node-red" ],
+  "node-red": {
+     "nodes": {
+        "ogc-token": "token.js",
+        "ogc-core-login": "core_login.js",
+        "ogc-core-logout": "core_logout.js",
+        "ogc-core-version": "core_version.js"
+     }
+  },
+  "dependencies": {
+    "follow-redirects": "0.x",
+    "url": "0.x",
+    "mustache": "2.x",
+    "querystring": "0.x"
+  }
+}

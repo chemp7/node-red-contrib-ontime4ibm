@@ -1,0 +1,184 @@
+<!--
+  Copyright JS Foundation and other contributors, http://js.foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!--
+	Copyright (c) 2017 Takeshi Yoshida
+	Released under the MIT license
+	https://opensource.org/licenses/mit-license.php
+
+	This program has been created on the basis of the http request node.
+	Added support for Ontime Group Calendar on domino server.
+-->
+
+<script type="text/x-red" data-template-name="core login">
+    <div class="form-row">
+	    <label for="node-input-host"><i class="fa fa-server"></i> host</label>
+        <input type="text" id="node-input-host" placeholder="e.g. http://mydominoserver.co.jp">
+    </div>
+
+    <div class="form-row">
+	    <label for="node-input-APIVer"><i class="fa fa-wrench "></i> APIVer</label>
+        <select type="text" id="node-input-APIVer" style="width:72%;">
+	        <option value="use">- set by msg.compact -</option>
+        	<option value="7">7</option>
+        </select>
+    </div>
+
+    <div class="form-row">
+	    <label for="node-input-ApplID"><i class="fa fa-wrench "></i> ApplID</label>
+        <input type="text" id="node-input-ApplID" placeholder="e.g. ApiExplorer">
+    </div>
+    
+    <div class="form-row">
+	    <label for="node-input-ApplVer"><i class="fa fa-wrench "></i> ApplVer</label>
+        <input type="text" id="node-input-ApplVer" placeholder="e.g. 7">
+    </div>
+
+    <div class="form-row">
+	    <label for="node-input-CustomID"><i class="fa fa-wrench "></i> CustomID</label>
+        <input type="text" id="node-input-CustomID" placeholder="e.g. 1234567890">
+    </div>
+
+    <div class="form-row">
+        <input type="checkbox" id="node-input-usetls" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-usetls" style="width: auto" data-i18n="httpin.use-tls"></label>
+        <div id="node-row-tls" class="hide">
+            <label style="width: auto; margin-left: 20px; margin-right: 10px;" for="node-input-tls"><span data-i18n="httpin.tls-config"></span></label><input type="text" style="width: 300px" id="node-input-tls">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <input type="checkbox" id="node-input-useAuth" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-useAuth" style="width: 70%;"><span data-i18n="httpin.basicauth"></span></label>
+        <div style="margin-left: 20px" class="node-input-useAuth-row hide">
+            <div class="form-row">
+                <label for="node-input-user"><i class="fa fa-user"></i> <span data-i18n="common.label.username"></span></label>
+                <input type="text" id="node-input-user">
+            </div>
+            <div class="form-row">
+                <label for="node-input-password"><i class="fa fa-lock"></i> <span data-i18n="common.label.password"></span></label>
+                <input type="password" id="node-input-password">
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="common.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]common.label.name">
+    </div>
+
+    <div id="node-input-tip" class="form-tips">
+        <p>This token node does not use CustomID.</p>
+        <p>This CustomID is used in subsequent nodes.</p>
+    </div>
+
+    <div class="form-tips" id="tip-json" hidden><span data-i18n="httpin.tip.req"></span></div>
+</script>
+
+<script type="text/x-red" data-help-name="core login">
+    <p>Endpoint: Token (APIVer 7)</p>
+    <p>Used to verify the token.</p>
+    <ul>
+        <li><code>host</code> is a domino server.</li>
+        <li><code>APIVer</code>, (required) The version of the API you are using</li>
+        <li><code>ApplID</code>, (required) Application ID - must be present in the license key</li>
+        <li><code>ApplVer</code>, (required) The application version number - useful for debugging</li>
+        <li><code>CustomID</code>, This token node does not use CustomID. This CustomID is used in subsequent nodes.</li>
+    </ul>
+    The output message contains the following properties:
+    <ul>
+        <li><code>payload</code> is the body of the response</li>
+	    <ul>
+	        <li><code>Status</code> "OK" or "ERROR"</li>
+	        <li><code>Token</code></li>
+	    </ul>
+    </ul>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('core login',{
+        category: 'Group calendar',
+        color:"rgb(253, 184, 19)",
+        defaults: {
+            name: {value:""},
+            host:{value:""},
+            APIVer:{value:"use"},
+            ApplID:{value:""},
+            ApplVer:{value:""},
+            CustomID:{value:""},
+            tls: {type:"tls-config",required: false}
+        },
+        credentials: {
+            user: {type:"text"},
+            password: {type: "password"}
+        },
+        inputs:1,
+        outputs:1,
+		icon: "calendar.png",
+        label: function() {
+            return this.name||"core login";
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        },
+
+        oneditprepare: function() {
+            $("#node-input-useAuth").change(function() {
+                if ($(this).is(":checked")) {
+                    $(".node-input-useAuth-row").show();
+                } else {
+                    $(".node-input-useAuth-row").hide();
+                    $('#node-input-user').val('');
+                    $('#node-input-password').val('');
+                }
+            });
+            if (this.credentials.user || this.credentials.has_password) {
+                $('#node-input-useAuth').prop('checked', true);
+            } else {
+                $('#node-input-useAuth').prop('checked', false);
+            }
+            $("#node-input-useAuth").change();
+
+            function updateTLSOptions() {
+                if ($("#node-input-usetls").is(':checked')) {
+                    $("#node-row-tls").show();
+                } else {
+                    $("#node-row-tls").hide();
+                }
+            }
+            if (this.tls) {
+                $('#node-input-usetls').prop('checked', true);
+            } else {
+                $('#node-input-usetls').prop('checked', false);
+            }
+            updateTLSOptions();
+            $("#node-input-usetls").on("click",function() {
+                updateTLSOptions();
+            });
+            $("#node-input-ret").change(function() {
+                if ($("#node-input-ret").val() === "obj") {
+                    $("#tip-json").show();
+                } else {
+                    $("#tip-json").hide();
+                }
+            });
+        },
+        oneditsave: function() {
+            if (!$("#node-input-usetls").is(':checked')) {
+                $("#node-input-tls").val("_ADD_");
+            }
+        }
+    });
+</script>
