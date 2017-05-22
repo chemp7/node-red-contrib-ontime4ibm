@@ -19,9 +19,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-## License
-MIT
 
+
+This program has been created on the basis of the "http request node".
+Added support for Ontime Group Calendar on domino server.
+
+## License of "http request node".
+MIT
 
   Copyright JS Foundation and other contributors, http://js.foundation
 
@@ -36,3 +40,6 @@ MIT
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
+
+
+

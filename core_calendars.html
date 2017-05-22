@@ -22,7 +22,37 @@
 	Added support for Ontime Group Calendar on domino server.
 -->
 
-<script type="text/x-red" data-template-name="core login">
+<script type="text/x-red" data-template-name="core calendars">
+    <div class="form-row">
+	    <label for="node-input-IDs"><i class="fa fa-users"></i> IDs</label>
+        <input type="text" id="node-input-IDs" placeholder="e.g. 1;2;A">
+    </div>
+
+    <div class="form-row">
+	    <label for="node-input-Emails"><i class="fa fa-envelope"></i> Emails</label>
+        <input type="text" id="node-input-Emails" placeholder="e.g. user1@mydomain.com;user2@mydomain.com">
+    </div>
+
+    <div class="form-row">
+	    <label for="node-input-ShortNames"><i class="fa fa-users"></i> ShortNames</label>
+        <input type="text" id="node-input-ShortNames" placeholder="e.g. administ">
+    </div>
+
+    <div class="form-row">
+	    <label for="node-input-DNs"><i class="fa fa-users"></i> DNs(Notes)</label>
+        <input type="text" id="node-input-DNs" placeholder="e.g. Administrator/Domino">
+    </div>
+
+    <div class="form-row">
+	    <label for="node-input-FromDT"><i class="fa fa-calendar"></i> FromDT</label>
+        <input type="text" id="node-input-FromDT" placeholder="Start date/time, format YYYY-MM-dd'T'HH:mm:ss'Z'">
+    </div>
+
+    <div class="form-row">
+	    <label for="node-input-ToDT"><i class="fa fa-calendar"></i> ToDT</label>
+        <input type="text" id="node-input-ToDT" placeholder="End date/time, format YYYY-MM-dd'T'HH:mm:ss'Z'">
+    </div>
+
     <div class="form-row">
 	    <label for="node-input-CustomID"><i class="fa fa-bookmark"></i> CustomID</label>
         <input type="text" id="node-input-CustomID" placeholder="e.g. 1234567890">
@@ -44,10 +74,16 @@
     <div class="form-tips" id="tip-json" hidden><span data-i18n="httpin.tip.req"></span></div>
 </script>
 
-<script type="text/x-red" data-help-name="core login">
-    <p>Endpoint: Core (APIVer 7) Login</p>
-    <p>Used to verify the token.</p>
+<script type="text/x-red" data-help-name="core calendars">
+    <p>Endpoint: Core (APIVer 7) UsersInfo</p>
+    <p>Information of specific users.</p>
     <ul>
+        <li><code>IDs</code>, Semicolon separated list of OnTime ID's</li>
+        <li><code>Emails</code>, Semicolon separated list of email addresses</li>
+        <li><code>ShortNames</code>, Semicolon separated list of short names</li>
+        <li><code>DNs</code>, Semicolon separated list of distinguished names (Notes UserName)</li>
+        <li><code>FromDT</code>, (required) Start date time in UTC formatted in ISO format (YYYY-MM-dd'T'HH:mm:ss'Z')</li>
+        <li><code>ToDT</code>, (required) End date time in UTC formatted in ISO format (YYYY-MM-dd'T'HH:mm:ss'Z')</li>
         <li><code>CustomID</code>, Any custom ID to help the client differentiate the requests - will be included in the response</li>
     </ul>
     The output message contains the following properties:
@@ -56,17 +92,24 @@
 	    <ul>
 	        <li><code>Status</code> "OK" or "ERROR"</li>
 	        <li><code>Token</code></li>
-	        <li><code>Login</code></li>
+	        <li><code>Calendars</code></li>
 	    </ul>
     </ul>
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType('core login',{
+    RED.nodes.registerType('core calendars',{
         category: 'Group calendar',
         color:"rgb(253, 184, 19)",
         defaults: {
             name: {value:""},
+            IDs:{value:""},
+            Emails:{value:""},
+            ShortNames:{value:""},
+            DNs:{value:""},
+            Groups:{value:""},
+            FromDT:{value:""},
+            ToDT:{value:""},
             CustomID:{value:""},
             tls: {type:"tls-config",required: false}
         },
@@ -74,7 +117,7 @@
         outputs:1,
 		icon: "calendar.png",
         label: function() {
-            return this.name||"core login";
+            return this.name||"core calendars";
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";

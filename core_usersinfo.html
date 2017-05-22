@@ -22,7 +22,7 @@
 	Added support for Ontime Group Calendar on domino server.
 -->
 
-<script type="text/x-red" data-template-name="core logout">
+<script type="text/x-red" data-template-name="core usersinfo">
     <div class="form-row">
 	    <label for="node-input-host"><i class="fa fa-server"></i> host</label>
         <input type="text" id="node-input-host" placeholder="e.g. http://mydominoserver.co.jp">
@@ -49,6 +49,41 @@
     <div class="form-row">
 	    <label for="node-input-CustomID"><i class="fa fa-tag"></i> CustomID</label>
         <input type="text" id="node-input-CustomID" placeholder="e.g. 1234567890">
+    </div>
+
+    <div class="form-row">
+	    <label for="node-input-Any"><i class="fa fa-search"></i> Any</label>
+        <input type="text" id="node-input-Any" placeholder="e.g. 1;2;A;user1@mydomain.com;user2@mydomain.com">
+    </div>
+
+    <div class="form-row">
+	    <label for="node-input-IDs"><i class="fa fa-users"></i> IDs</label>
+        <input type="text" id="node-input-IDs" placeholder="e.g. 1;2;A">
+    </div>
+
+    <div class="form-row">
+	    <label for="node-input-Emails"><i class="fa fa-envelope"></i> Emails</label>
+        <input type="text" id="node-input-Emails" placeholder="e.g. user1@mydomain.com;user2@mydomain.com">
+    </div>
+
+    <div class="form-row">
+	    <label for="node-input-ShortNames"><i class="fa fa-users"></i> ShortNames</label>
+        <input type="text" id="node-input-ShortNames" placeholder="e.g. administ">
+    </div>
+
+    <div class="form-row">
+	    <label for="node-input-DNs"><i class="fa fa-users"></i> DNs(Notes)</label>
+        <input type="text" id="node-input-DNs" placeholder="e.g. Administrator/Domino">
+    </div>
+
+    <div class="form-row">
+	    <label for="node-input-Groups"><i class="fa fa-object-ungroup"></i> Groups</label>
+        <input type="text" id="node-input-Groups" placeholder="e.g. 595CE49D3982120849258115002D43F4">
+    </div>
+
+    <div class="form-row">
+	    <label for="node-input-Items"><i class="fa fa-th-list"></i> Items</label>
+        <input type="text" id="node-input-Items" placeholder="e.g. ID;Name;Email">
     </div>
 
     <div class="form-row">
@@ -82,16 +117,23 @@
     <div class="form-tips" id="tip-json" hidden><span data-i18n="httpin.tip.req"></span></div>
 </script>
 
-<script type="text/x-red" data-help-name="core logout">
-    <p>Endpoint: Token (APIVer 7) Logout</p>
-    <p>Tell the API that we're logging out. Not critical, more as good behavior and for logging.</p>
+<script type="text/x-red" data-help-name="core usersinfo">
+    <p>Endpoint: Core (APIVer 7) UsersInfo</p>
+    <p>Information of specific users.</p>
     <ul>
         <li><code>host</code> is a domino server.</li>
-        <li><code>APIVer</code>, (required) The version of the API you are using</li>
+        <li><code>MAPIVer</code>, (required) The version of the API you are using</li>
         <li><code>ApplID</code>, (required) Application ID - must be present in the license key</li>
         <li><code>ApplVer</code>, (required) The application version number - useful for debugging</li>
         <li><code>CustomID</code>, Any custom ID to help the client differentiate the requests - will be included in the response</li>
         <li><code>Token</code>, (required) The OnTime Group Calendar token</li>
+        <li><code>Any</code>, Semicolon separated list of identifies (ID, Email, DN)</li>
+        <li><code>IDs</code>, Semicolon separated list of OnTime ID's</li>
+        <li><code>Emails</code>, Semicolon separated list of email addresses</li>
+        <li><code>ShortNames</code>, Semicolon separated list of short names</li>
+        <li><code>DNs</code>, Semicolon separated list of distinguished names (Notes UserName)</li>
+        <li><code>Groups</code>, Semicolon separated list of group IDs</li>
+        <li><code>Items</code>, Semicolon separated list of items to return for each user. Blank fetches all.</li>
     </ul>
     The output message contains the following properties:
     <ul>
@@ -104,7 +146,7 @@
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType('core logout',{
+    RED.nodes.registerType('core usersinfo',{
         category: 'Group calendar',
         color:"rgb(253, 184, 19)",
         defaults: {
@@ -114,6 +156,14 @@
             ApplID:{value:""},
             ApplVer:{value:""},
             CustomID:{value:""},
+            Any:{value:""},
+            IDs:{value:""},
+            Emails:{value:""},
+            ShortNames:{value:""},
+            DNs:{value:""},
+            Groups:{value:""},
+            ExcludeIDs:{value:""},
+            Items:{value:"ID;Name;Email"},
             tls: {type:"tls-config",required: false}
         },
         credentials: {
@@ -124,7 +174,7 @@
         outputs:1,
 		icon: "calendar.png",
         label: function() {
-            return this.name||"core logout";
+            return this.name||"core usersinfo";
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";

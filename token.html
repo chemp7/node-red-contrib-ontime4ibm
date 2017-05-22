@@ -29,25 +29,25 @@
     </div>
 
     <div class="form-row">
-	    <label for="node-input-APIVer"><i class="fa fa-wrench "></i> APIVer</label>
+	    <label for="node-input-APIVer"><i class="fa fa-cog"></i> APIVer</label>
         <select type="text" id="node-input-APIVer" style="width:72%;">
-	        <option value="use">- set by msg.compact -</option>
+	        <option value="use">- set by msg.payload or msg.OGCParameters -</option>
         	<option value="7">7</option>
         </select>
     </div>
 
     <div class="form-row">
-	    <label for="node-input-ApplID"><i class="fa fa-wrench "></i> ApplID</label>
+	    <label for="node-input-ApplID"><i class="fa fa-cog"></i> ApplID</label>
         <input type="text" id="node-input-ApplID" placeholder="e.g. ApiExplorer">
     </div>
     
     <div class="form-row">
-	    <label for="node-input-ApplVer"><i class="fa fa-wrench "></i> ApplVer</label>
+	    <label for="node-input-ApplVer"><i class="fa fa-cog"></i> ApplVer</label>
         <input type="text" id="node-input-ApplVer" placeholder="e.g. 7">
     </div>
 
     <div class="form-row">
-	    <label for="node-input-CustomID"><i class="fa fa-wrench "></i> CustomID</label>
+	    <label for="node-input-CustomID"><i class="fa fa-tag"></i> CustomID</label>
         <input type="text" id="node-input-CustomID" placeholder="e.g. 1234567890">
     </div>
 
@@ -114,7 +114,7 @@
         defaults: {
             name: {value:""},
             host:{value:""},
-            APIVer:{value:"use"},
+            APIVer:{value:"7"},
             ApplID:{value:""},
             ApplVer:{value:""},
             CustomID:{value:""},

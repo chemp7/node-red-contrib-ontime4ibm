@@ -18,7 +18,10 @@
         "ogc-token": "token.js",
         "ogc-core-login": "core_login.js",
         "ogc-core-logout": "core_logout.js",
-        "ogc-core-version": "core_version.js"
+        "ogc-core-version": "core_version.js",
+        "ogc-core-usersall": "core_usersall.js",
+        "ogc-core-usersinfo": "core_usersinfo.js",
+        "ogc-core-calendars": "core_calendars.js"
      }
   },
   "dependencies": {

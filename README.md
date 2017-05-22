@@ -27,6 +27,15 @@ It is possible to access easy to Ontime Group Calendar by use by the node that i
 * core version
   - Return some version information of API and running server.
 
+* core usersall
+  - List of all users and their information.
+
+* core usersinfo
+  - Information of specific users.
+
+* core calendars
+  - Alle calendar entries for specific users for a given time range.
+
 
 ## Install
 

@@ -41,6 +41,8 @@ module.exports = function(RED) {
         var nodeApplID = n.ApplID;
 		var nodeApplVer = n.ApplVer;
 		var nodeCustomID = n.CustomID;
+		var nodeItems = n.Items;			// param
+		var nodeType = n.Type || "use"		// param
         if (n.tls) {
             var tlsNode = RED.nodes.getNode(n.tls);
         }
@@ -54,18 +56,11 @@ module.exports = function(RED) {
         if (process.env.no_proxy != null) { noprox = process.env.no_proxy.split(","); }
         if (process.env.NO_PROXY != null) { noprox = process.env.NO_PROXY.split(","); }
         
-        util.log(DEBUG, "----------" + nodeName + "----------");
-		util.logWithLabel(DEBUG, "node: host", nodeHost);
-		util.logWithLabel(DEBUG, "node: APIVer", nodeAPIVer);
-		util.logWithLabel(DEBUG, "node: ApplID", nodeApplID);
-		util.logWithLabel(DEBUG, "node: ApplVer", nodeApplVer);
-		util.logWithLabel(DEBUG, "node: CustomID", nodeCustomID);
-        util.log(DEBUG, "------------------------------");
-        
         this.on("input",function(msg) {
             var preRequestTimestamp = process.hrtime();
             node.status({fill:"blue",shape:"dot",text:"httpin.status.requesting"});
             var method = "POST";
+			var toString = Object.prototype.toString;
 			
             var host = nodeHost || ((typeof msg.host === "undefined") ? "" : msg.host);
 		    if (nodeAPIVer === "use"){
@@ -77,29 +72,22 @@ module.exports = function(RED) {
 			var Token = util.getOGCParameter("", msg, "Token");
 			var CustomID = util.getOGCParameter(nodeCustomID, msg, "CustomID");
 			
-	        util.log(DEBUG, "----------" + nodeName + "----------");
-			util.logWithLabel(DEBUG, "host", host);
-			util.logWithLabel(DEBUG, "APIVer", APIVer);
-			util.logWithLabel(DEBUG, "ApplID", ApplID);
-			util.logWithLabel(DEBUG, "ApplVer", ApplVer);
-			util.logWithLabel(DEBUG, "CustomID", CustomID);
-	        util.log(DEBUG, "------------------------------");
+			var Items = util.getUsersAllParameter(nodeItems, msg, "Items");				// param: Items
+		    if (nodeType === "use"){
+        		nodeType = "";
+			}
+			var Type = util.getUsersAllTypeParameter(nodeType, msg, "Type");				// param: Type
 			
 			// Set host
 			msg.host = host;
 			
-			var toString = Object.prototype.toString;
 			// Set msg.payload.Main
 			if (toString.call(msg.payload) === "[object Object]") {
-				util.log(DEBUG, "msg.payload: Object");
 				if (toString.call(msg.payload.Main) === "[object Object]") {
-					util.log(DEBUG, "msg.payload.Main: Object");
 				} else {
-					util.log(DEBUG, "msg.payload.Main: Not object");
 					msg.payload.Main = {};
 				}
 			} else {
-				util.log(DEBUG, "msg.payload: Not object");
 				msg.payload = {
 					"Main":{}
 				};
@@ -113,7 +101,22 @@ module.exports = function(RED) {
 			} else {
 				msg.payload.Main.CustomID = CustomID;
 			}
-			msg.payload.Logout = {};	// Operation
+			// Operation
+			// UsersAll parameters
+			if (toString.call(msg.payload.UsersAll) === "[object Object]") {
+				if (toString.call(msg.payload.UsersAll.Items) !== "[object Array]") {msg.payload.UsersAll.Items = [];}
+				if (toString.call(msg.payload.UsersAll.ExcludeIDs) !== "[object Array]") {msg.payload.UsersAll.ExcludeIDs = [];}
+				if (toString.call(msg.payload.UsersAll.Type) === "[object Number]") {
+					msg.payload.UsersAll.Type = Type;
+				} else if (toString.call(msg.payload.UsersAll.Type) === "[object String]") {
+					msg.payload.UsersAll.Type = Number(Type);
+				} else {
+					msg.payload.UsersAll.Type = 0;
+				}
+			} else {
+				msg.payload.UsersAll = {};
+			}
+			msg.payload.UsersAll.Items = Items;
 			
 			// Set msg.OGCParameters.Main
 			if (toString.call(msg.OGCParameters) === "[object Object]") {
@@ -146,7 +149,6 @@ module.exports = function(RED) {
             var url = encodeURI(util.setSlash( host ) + apiPath);
 			
 	        util.log(DEBUG, "----------" + nodeName + "----------");
-			util.log("url", url);
 			util.log(DEBUG, msg);
 	        util.log(DEBUG, "------------------------------");
 			
@@ -323,7 +325,7 @@ module.exports = function(RED) {
         });
     }
     
-    RED.nodes.registerType("core logout",HTTPRequest,{
+    RED.nodes.registerType("core usersall",HTTPRequest,{
         credentials: {
             user: {type:"text"},
             password: {type: "password"}

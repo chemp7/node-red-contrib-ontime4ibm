@@ -88,8 +88,18 @@ module.exports = function(RED) {
 			// Set host
 			msg.host = host;
 			
+			var toString = Object.prototype.toString;
 			// Set msg.payload.Main
-			if (typeof msg.payload.Main === "undefined") {
+			if (toString.call(msg.payload) === "[object Object]") {
+				util.log(DEBUG, "msg.payload: Object");
+				if (toString.call(msg.payload.Main) === "[object Object]") {
+					util.log(DEBUG, "msg.payload.Main: Object");
+				} else {
+					util.log(DEBUG, "msg.payload.Main: Not object");
+					msg.payload.Main = {};
+				}
+			} else {
+				util.log(DEBUG, "msg.payload: Not object");
 				msg.payload = {
 					"Main":{}
 				};
@@ -103,14 +113,19 @@ module.exports = function(RED) {
 			} else {
 				msg.payload.Main.CustomID = CustomID;
 			}
-			msg.payload.Version = {};
+			msg.payload.Version = {};	// Operation
 			
 			// Set msg.OGCParameters.Main
-			if (typeof msg.OGCParameters === "undefined") {
-				msg.OGCParameters = {};
-			}
-			if (typeof msg.OGCParameters.Main === "undefined") {
-				msg.OGCParameters.Main = {};
+			if (toString.call(msg.OGCParameters) === "[object Object]") {
+				if (toString.call(msg.OGCParameters.Main) === "[object Object]") {
+					//
+				} else {
+					msg.OGCParameters.Main = {};
+				}
+			} else {
+				msg.OGCParameters = {
+					"Main":{}
+				};
 			}
 			msg.OGCParameters.Main.APIVer = APIVer;
 			msg.OGCParameters.Main.ApplID = ApplID;
