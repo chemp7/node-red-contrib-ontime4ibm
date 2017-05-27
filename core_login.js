@@ -35,9 +35,8 @@ module.exports = function(RED) {
     	RED.nodes.createNode(this,n);
         var node = this;
         var nodeName = n.name;
-		var nodeUrl = "";
-        var nodeHost = "";
 		var nodeCustomID = n.CustomID;
+		var operationKey = "Login";
         if (n.tls) {
             var tlsNode = RED.nodes.getNode(n.tls);
         }
@@ -64,67 +63,27 @@ module.exports = function(RED) {
 			var Token = util.getOGCParameter("", msg, "Token");
 			var CustomID = util.getOGCParameter(nodeCustomID, msg, "CustomID");
 			
+			// set host
 			msg.host = host;
-			
-			// Set msg.payload.Main
-			if (toString.call(msg.payload) === "[object Object]") {
-				util.log(DEBUG, "msg.payload: Object");
-				if (toString.call(msg.payload.Main) === "[object Object]") {
-					util.log(DEBUG, "msg.payload.Main: Object");
-				} else {
-					util.log(DEBUG, "msg.payload.Main: Not object");
-					msg.payload.Main = {};
-				}
-			} else {
-				util.log(DEBUG, "msg.payload: Not object");
-				msg.payload = {
-					"Main":{}
-				};
-			}
-			msg.payload.Main.APIVer = APIVer;
-			msg.payload.Main.ApplID = ApplID;
-			msg.payload.Main.ApplVer = ApplVer;
-			msg.payload.Main.Token = Token;
-			if (CustomID === "") {
-				delete msg.payload.Main["CustomID"];
-			} else {
-				msg.payload.Main.CustomID = CustomID;
-			}
+			// set Main Parameters
+			if (toString.call(msg.payload) !== "[object Object]") { msg.payload = {}; }
+			msg.payload.Main = util.getMainParameters(APIVer, ApplID, ApplVer, CustomID, Token);
+			// set OGC Parameters
+			msg.OGCParameters = util.getOGCParameters(APIVer, ApplID, ApplVer, CustomID, Token);
 			
 			// operation
-			msg.payload.Login = {};
+			msg.payload[operationKey] = {};
 			
-			// Set msg.OGCParameters.Main
-			if (toString.call(msg.OGCParameters) === "[object Object]") {
-				if (toString.call(msg.OGCParameters.Main) === "[object Object]") {
-					//
-				} else {
-					msg.OGCParameters.Main = {};
-				}
-			} else {
-				msg.OGCParameters = {
-					"Main":{}
-				};
-			}
-			msg.OGCParameters.Main.APIVer = APIVer;
-			msg.OGCParameters.Main.ApplID = ApplID;
-			msg.OGCParameters.Main.ApplVer = ApplVer;
-			msg.OGCParameters.Main.Token = Token;
-			if (CustomID === "") {
-				delete msg.OGCParameters.Main["CustomID"];
-			} else {
-				msg.OGCParameters.Main.CustomID = CustomID;
-			}
+            // url
+			var apiPath = "apihttp/";
+            var url = encodeURI(util.setSlash( host ) + apiPath);
 			
 			// delete object
 			delete msg["headers"];
 			delete msg.payload["Status"];
 			delete msg.payload["Token"];
 			
-            // API
-			var apiPath = "apihttp/";
-            var url = encodeURI(util.setSlash( host ) + apiPath);
-			
+			// debug
 	        util.log(DEBUG, "----------" + nodeName + "----------");
 			util.log(DEBUG, msg);
 	        util.log(DEBUG, "------------------------------");
@@ -137,9 +96,6 @@ module.exports = function(RED) {
 				return;
 			}
             
-            if (msg.url && nodeUrl && (nodeUrl !== msg.url)) {  // revert change below when warning is finally removed
-                node.warn(RED._("common.errors.nooverride"));
-            }
             if (!url) {
                 node.error(RED._("httpin.errors.no-url"),msg);
                 return;

@@ -22,7 +22,7 @@
 	Added support for Ontime Group Calendar on domino server.
 -->
 
-<script type="text/x-red" data-template-name="core version">
+<script type="text/x-red" data-template-name="extened">
     <div class="form-row">
 	    <label for="node-input-CustomID"><i class="fa fa-bookmark"></i> CustomID</label>
         <input type="text" id="node-input-CustomID" placeholder="e.g. 1234567890">
@@ -44,10 +44,11 @@
     <div class="form-tips" id="tip-json" hidden><span data-i18n="httpin.tip.req"></span></div>
 </script>
 
-<script type="text/x-red" data-help-name="core version">
-    <p>Endpoint: Core (APIVer 7) Version</p>
-    <p>Return some version information of API and running server.</p>
+<script type="text/x-red" data-help-name="extened">
+    <p>Endpoint: Core (APIVer 7)</p>
+    <p>Version 7 of the main endpoint.</p>
     <ul>
+        <li><code>msg.payload[Operation]</code>, Set operation.</li>
         <li><code>msg.payload.Main.CustomID</code>, Any custom ID to help the client differentiate the requests - will be included in the response</li>
     </ul>
     The output message contains the following properties:
@@ -56,16 +57,16 @@
 	    <ul>
 	        <li><code>Status</code> "OK" or "ERROR"</li>
 	        <li><code>Token</code></li>
-	        <li><code>Version</code></li>
+	        <li><code>[Operation]</li>
 	        <li><code>CustomID</code> When request include custom ID, response include custom ID.</li>
 	    </ul>
     </ul>
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType('core version',{
+    RED.nodes.registerType('extened',{
         category: 'Group calendar',
-        color:"rgb(253, 184, 19)",
+        color:"rgb(255, 215, 0)",
         defaults: {
             name: {value:""},
             CustomID:{value:""},
@@ -75,7 +76,7 @@
         outputs:1,
 		icon: "calendar.png",
         label: function() {
-            return this.name||"core version";
+            return this.name||"core calendars";
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";

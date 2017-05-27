@@ -48,7 +48,7 @@
     <p>Endpoint: Core (APIVer 7) Login</p>
     <p>Used to verify the token.</p>
     <ul>
-        <li><code>CustomID</code>, Any custom ID to help the client differentiate the requests - will be included in the response</li>
+        <li><code>msg.payload.Main.CustomID</code>, Any custom ID to help the client differentiate the requests - will be included in the response</li>
     </ul>
     The output message contains the following properties:
     <ul>
@@ -57,6 +57,7 @@
 	        <li><code>Status</code> "OK" or "ERROR"</li>
 	        <li><code>Token</code></li>
 	        <li><code>Login</code></li>
+	        <li><code>CustomID</code> When request include custom ID, response include custom ID.</li>
 	    </ul>
     </ul>
 </script>

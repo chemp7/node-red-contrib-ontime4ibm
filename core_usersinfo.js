@@ -35,11 +35,6 @@ module.exports = function(RED) {
     	RED.nodes.createNode(this,n);
         var node = this;
         var nodeName = n.name;
-        var nodeAPIVer = n.APIVer || "use";
-		var nodeUrl = n.url;
-        var nodeHost = n.host;
-        var nodeApplID = n.ApplID;
-		var nodeApplVer = n.ApplVer;
 		var nodeCustomID = n.CustomID;
 		var nodeAny = n.Any;				// param
 		var nodeIDs = n.IDs;				// param
@@ -47,7 +42,9 @@ module.exports = function(RED) {
 		var nodeShortNames = n.ShortNames;	// param
 		var nodeDNs = n.DNs;				// param
 		var nodeGroups = n.Groups;			// param
+		var nodeExcludeIDs = n.ExcludeIDs	// param
 		var nodeItems = n.Items;			// param
+		var operationKey = "UsersInfo";
         if (n.tls) {
             var tlsNode = RED.nodes.getNode(n.tls);
         }
@@ -67,98 +64,62 @@ module.exports = function(RED) {
             var method = "POST";
 			var toString = Object.prototype.toString;
 			
-            var host = nodeHost || ((typeof msg.host === "undefined") ? "" : msg.host);
-		    if (nodeAPIVer === "use"){
-        		nodeAPIVer = "";
-			}
-			var APIVer = Number(util.getOGCParameter(nodeAPIVer, msg, "APIVer"));
-			var ApplID = util.getOGCParameter(nodeApplID, msg, "ApplID");
-			var ApplVer = util.getOGCParameter(nodeApplVer, msg, "ApplVer");
+            var host = (typeof msg.host === "undefined") ? "" : msg.host;
+			var APIVer = Number(util.getOGCParameter("", msg, "APIVer"));
+			var ApplID = util.getOGCParameter("", msg, "ApplID");
+			var ApplVer = util.getOGCParameter("", msg, "ApplVer");
 			var Token = util.getOGCParameter("", msg, "Token");
 			var CustomID = util.getOGCParameter(nodeCustomID, msg, "CustomID");
 			
-			var Any = util.getUsersInfoParameter(nodeAny, msg, "Any");						// param: Any
-			var IDs = util.getUsersInfoParameter(nodeIDs, msg, "IDs");						// param: IDs
-			var Emails = util.getUsersInfoParameter(nodeEmails, msg, "Emails");				// param: Emails
-			var ShortNames = util.getUsersInfoParameter(nodeShortNames, msg, "ShortNames");	// param: ShortNames
-			var DNs = util.getUsersInfoParameter(nodeDNs, msg, "DNs");						// param: DNs
-			var Groups = util.getUsersInfoParameter(nodeGroups, msg, "Groups");				// param: Groups
-			var Items = util.getUsersInfoParameter(nodeItems, msg, "Items");				// param: Items
-			// Set host
+			var Any = util.getParameterArray(nodeAny, msg, "Any");						// param: Any
+			var IDs = util.getParameterArray(nodeIDs, msg, "IDs");						// param: IDs
+			var Emails = util.getParameterArray(nodeEmails, msg, "Emails");				// param: Emails
+			var ShortNames = util.getParameterArray(nodeShortNames, msg, "ShortNames");	// param: ShortNames
+			var DNs = util.getParameterArray(nodeDNs, msg, "DNs");						// param: DNs
+			var Groups = util.getParameterArray(nodeGroups, msg, "Groups");				// param: Groups
+			var ExcludeIDs = util.getParameterArray(nodeExcludeIDs, msg, "ExcludeIDs");	// param: ExcludeIDs
+			var Items = util.getParameterArray(nodeItems, msg, "Items");				// param: Items
+			
+			// set host
 			msg.host = host;
+			// set Main Parameters
+			if (toString.call(msg.payload) !== "[object Object]") { msg.payload = {}; }
+			msg.payload.Main = util.getMainParameters(APIVer, ApplID, ApplVer, CustomID, Token);
+			// set OGC Parameters
+			msg.OGCParameters = util.getOGCParameters(APIVer, ApplID, ApplVer, CustomID, Token);
 			
-			// Set msg.payload.Main
-			if (toString.call(msg.payload) === "[object Object]") {
-				if (toString.call(msg.payload.Main) === "[object Object]") {
-				} else {
-					msg.payload.Main = {};
-				}
-			} else {
-				msg.payload = {
-					"Main":{}
-				};
-			}
-			msg.payload.Main.APIVer = APIVer;
-			msg.payload.Main.ApplID = ApplID;
-			msg.payload.Main.ApplVer = ApplVer;
-			msg.payload.Main.Token = Token;
-			if (CustomID === "") {
-				delete msg.payload.Main["CustomID"];
-			} else {
-				msg.payload.Main.CustomID = CustomID;
-			}
 			// Operation
-			// UsersInfo parameters
-			if (toString.call(msg.payload.UsersInfo) === "[object Object]") {
-				if (toString.call(msg.payload.UsersInfo.Any) !== "[object Array]") {msg.payload.UsersInfo.Any = [];}
-				if (toString.call(msg.payload.UsersInfo.IDs) !== "[object Array]") {msg.payload.UsersInfo.IDs = [];}
-				if (toString.call(msg.payload.UsersInfo.Emails) !== "[object Array]") {msg.payload.UsersInfo.Emails = [];}
-				if (toString.call(msg.payload.UsersInfo.ShortNames) !== "[object Array]") {msg.payload.UsersInfo.ShortNames = [];}
-				if (toString.call(msg.payload.UsersInfo.DNs) !== "[object Array]") {msg.payload.UsersInfo.DNs = [];}
-				if (toString.call(msg.payload.UsersInfo.Groups) !== "[object Array]") {msg.payload.UsersInfo.Groups = [];}
-				if (toString.call(msg.payload.UsersInfo.Items) !== "[object Array]") {msg.payload.UsersInfo.Items = [];}
-				if (toString.call(msg.payload.UsersInfo.ExcludeIDs) !== "[object Array]") {msg.payload.UsersInfo.ExcludeIDs = [];}
+			if (toString.call(msg.payload[operationKey]) === "[object Object]") {
+				if (toString.call(msg.payload[operationKey].Any) !== "[object Array]") {msg.payload[operationKey].Any = [];}
+				if (toString.call(msg.payload[operationKey].IDs) !== "[object Array]") {msg.payload[operationKey].IDs = [];}
+				if (toString.call(msg.payload[operationKey].Emails) !== "[object Array]") {msg.payload[operationKey].Emails = [];}
+				if (toString.call(msg.payload[operationKey].ShortNames) !== "[object Array]") {msg.payload[operationKey].ShortNames = [];}
+				if (toString.call(msg.payload[operationKey].DNs) !== "[object Array]") {msg.payload[operationKey].DNs = [];}
+				if (toString.call(msg.payload[operationKey].Groups) !== "[object Array]") {msg.payload[operationKey].Groups = [];}
+				if (toString.call(msg.payload[operationKey].ExcludeIDs) !== "[object Array]") {msg.payload[operationKey].ExcludeIDs = [];}
+				if (toString.call(msg.payload[operationKey].Items) !== "[object Array]") {msg.payload[operationKey].Items = [];}
 			} else {
-				msg.payload.UsersInfo = {};
+				msg.payload[operationKey] = {};
 			}
-			msg.payload.UsersInfo.Any = Any;
-			msg.payload.UsersInfo.IDs = IDs;
-			msg.payload.UsersInfo.Emails = Emails;
-			msg.payload.UsersInfo.ShortNames = ShortNames;
-			msg.payload.UsersInfo.DNs = DNs;
-			msg.payload.UsersInfo.Groups = Groups;
-			msg.payload.UsersInfo.Items = Items;
+			msg.payload[operationKey].Any = Any;
+			msg.payload[operationKey].IDs = IDs;
+			msg.payload[operationKey].Emails = Emails;
+			msg.payload[operationKey].ShortNames = ShortNames;
+			msg.payload[operationKey].DNs = DNs;
+			msg.payload[operationKey].Groups = Groups;
+			msg.payload[operationKey].ExcludeIDs = ExcludeIDs;
+			msg.payload[operationKey].Items = Items;
 			
-			// Set msg.OGCParameters.Main
-			if (toString.call(msg.OGCParameters) === "[object Object]") {
-				if (toString.call(msg.OGCParameters.Main) === "[object Object]") {
-					//
-				} else {
-					msg.OGCParameters.Main = {};
-				}
-			} else {
-				msg.OGCParameters = {
-					"Main":{}
-				};
-			}
-			msg.OGCParameters.Main.APIVer = APIVer;
-			msg.OGCParameters.Main.ApplID = ApplID;
-			msg.OGCParameters.Main.ApplVer = ApplVer;
-			msg.OGCParameters.Main.Token = Token;
-			if (CustomID === "") {
-				delete msg.OGCParameters.Main["CustomID"];
-			} else {
-				msg.OGCParameters.Main.CustomID = CustomID;
-			}
+            // url
+			var apiPath = "apihttp/";
+            var url = encodeURI(util.setSlash( host ) + apiPath);
 			
+			// delete object
 			delete msg["headers"];
 			delete msg.payload["Status"];
 			delete msg.payload["Token"];
 			
-            // API
-			var apiPath = "apihttp/";
-            var url = encodeURI(util.setSlash( host ) + apiPath);
-			
+			// debug
 	        util.log(DEBUG, "----------" + nodeName + "----------");
 			util.log(DEBUG, msg);
 	        util.log(DEBUG, "------------------------------");
@@ -171,9 +132,6 @@ module.exports = function(RED) {
 				return;
 			}
             
-            if (msg.url && nodeUrl && (nodeUrl !== msg.url)) {  // revert change below when warning is finally removed
-                node.warn(RED._("common.errors.nooverride"));
-            }
             if (!url) {
                 node.error(RED._("httpin.errors.no-url"),msg);
                 return;
@@ -206,12 +164,6 @@ module.exports = function(RED) {
                         opts.headers[name] = msg.headers[v];
                     }
                 }
-            }
-            if (this.credentials && this.credentials.user) {
-                opts.auth = this.credentials.user+":"+(this.credentials.password||"");
-            }
-            if (this.credentials && this.credentials.user) {
-                opts.auth = this.credentials.user+":"+(this.credentials.password||"");
             }
             var payload = null;
 
@@ -337,9 +289,6 @@ module.exports = function(RED) {
     }
     
     RED.nodes.registerType("core usersinfo",HTTPRequest,{
-        credentials: {
-            user: {type:"text"},
-            password: {type: "password"}
-        }
+		
     });
 }

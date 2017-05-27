@@ -75,16 +75,16 @@
 </script>
 
 <script type="text/x-red" data-help-name="core calendars">
-    <p>Endpoint: Core (APIVer 7) UsersInfo</p>
-    <p>Information of specific users.</p>
+    <p>Endpoint: Core (APIVer 7) Calendars</p>
+    <p>Alle calendar entries for specific users for a given time range.</p>
     <ul>
-        <li><code>IDs</code>, Semicolon separated list of OnTime ID's</li>
-        <li><code>Emails</code>, Semicolon separated list of email addresses</li>
-        <li><code>ShortNames</code>, Semicolon separated list of short names</li>
-        <li><code>DNs</code>, Semicolon separated list of distinguished names (Notes UserName)</li>
-        <li><code>FromDT</code>, (required) Start date time in UTC formatted in ISO format (YYYY-MM-dd'T'HH:mm:ss'Z')</li>
-        <li><code>ToDT</code>, (required) End date time in UTC formatted in ISO format (YYYY-MM-dd'T'HH:mm:ss'Z')</li>
-        <li><code>CustomID</code>, Any custom ID to help the client differentiate the requests - will be included in the response</li>
+        <li><code>msg.payload.Calendars.IDs</code>, Semicolon separated list of OnTime ID's</li>
+        <li><code>msg.payload.Calendars.Emails</code>, Semicolon separated list of email addresses</li>
+        <li><code>msg.payload.Calendars.ShortNames</code>, Semicolon separated list of short names</li>
+        <li><code>msg.payload.Calendars.DNs</code>, Semicolon separated list of distinguished names (Notes UserName)</li>
+        <li><code>msg.payload.Calendars.FromDT</code>, (required) Start date time in UTC formatted in ISO format (YYYY-MM-dd'T'HH:mm:ss'Z')</li>
+        <li><code>msg.payload.Calendars.ToDT</code>, (required) End date time in UTC formatted in ISO format (YYYY-MM-dd'T'HH:mm:ss'Z')</li>
+        <li><code>msg.payload.Main.CustomID</code>, Any custom ID to help the client differentiate the requests - will be included in the response</li>
     </ul>
     The output message contains the following properties:
     <ul>
@@ -93,6 +93,7 @@
 	        <li><code>Status</code> "OK" or "ERROR"</li>
 	        <li><code>Token</code></li>
 	        <li><code>Calendars</code></li>
+	        <li><code>CustomID</code> When request include custom ID, response include custom ID.</li>
 	    </ul>
     </ul>
 </script>

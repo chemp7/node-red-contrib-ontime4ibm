@@ -24,36 +24,13 @@
 
 <script type="text/x-red" data-template-name="core usersall">
     <div class="form-row">
-	    <label for="node-input-host"><i class="fa fa-server"></i> host</label>
-        <input type="text" id="node-input-host" placeholder="e.g. http://mydominoserver.co.jp">
-    </div>
-
-    <div class="form-row">
-	    <label for="node-input-APIVer"><i class="fa fa-cog"></i> APIVer</label>
-        <select type="text" id="node-input-APIVer" style="width:72%;">
-	        <option value="use">- set by msg.payload or msg.OGCParameters -</option>
-        	<option value="7">7</option>
-        </select>
-    </div>
-
-    <div class="form-row">
-	    <label for="node-input-ApplID"><i class="fa fa-cog"></i> ApplID</label>
-        <input type="text" id="node-input-ApplID" placeholder="e.g. ApiExplorer">
-    </div>
-    
-    <div class="form-row">
-	    <label for="node-input-ApplVer"><i class="fa fa-cog"></i> ApplVer</label>
-        <input type="text" id="node-input-ApplVer" placeholder="e.g. 7">
-    </div>
-
-    <div class="form-row">
-	    <label for="node-input-CustomID"><i class="fa fa-tag"></i> CustomID</label>
-        <input type="text" id="node-input-CustomID" placeholder="e.g. 1234567890">
-    </div>
-
-    <div class="form-row">
 	    <label for="node-input-Items"><i class="fa fa-th-list"></i> Items</label>
         <input type="text" id="node-input-Items" placeholder="e.g. ID;Name;Email">
+    </div>
+
+    <div class="form-row">
+	    <label for="node-input-ExcludeIDs"><i class="fa fa-times-circle"></i> ExcludeIDs</label>
+        <input type="text" id="node-input-ExcludeIDs" placeholder="Semicolon separated list of IDs to exclude for the specified group(s)">
     </div>
 
     <div class="form-row">
@@ -68,25 +45,15 @@
     </div>
 
     <div class="form-row">
+	    <label for="node-input-CustomID"><i class="fa fa-bookmark"></i> CustomID</label>
+        <input type="text" id="node-input-CustomID" placeholder="e.g. 1234567890">
+    </div>
+
+    <div class="form-row">
         <input type="checkbox" id="node-input-usetls" style="display: inline-block; width: auto; vertical-align: top;">
         <label for="node-input-usetls" style="width: auto" data-i18n="httpin.use-tls"></label>
         <div id="node-row-tls" class="hide">
             <label style="width: auto; margin-left: 20px; margin-right: 10px;" for="node-input-tls"><span data-i18n="httpin.tls-config"></span></label><input type="text" style="width: 300px" id="node-input-tls">
-        </div>
-    </div>
-
-    <div class="form-row">
-        <input type="checkbox" id="node-input-useAuth" style="display: inline-block; width: auto; vertical-align: top;">
-        <label for="node-input-useAuth" style="width: 70%;"><span data-i18n="httpin.basicauth"></span></label>
-        <div style="margin-left: 20px" class="node-input-useAuth-row hide">
-            <div class="form-row">
-                <label for="node-input-user"><i class="fa fa-user"></i> <span data-i18n="common.label.username"></span></label>
-                <input type="text" id="node-input-user">
-            </div>
-            <div class="form-row">
-                <label for="node-input-password"><i class="fa fa-lock"></i> <span data-i18n="common.label.password"></span></label>
-                <input type="password" id="node-input-password">
-            </div>
         </div>
     </div>
 
@@ -102,14 +69,10 @@
     <p>Endpoint: Core (APIVer 7) UsersAll</p>
     <p>List of all users and their information.</p>
     <ul>
-        <li><code>host</code> is a domino server.</li>
-        <li><code>MAPIVer</code>, (required) The version of the API you are using</li>
-        <li><code>ApplID</code>, (required) Application ID - must be present in the license key</li>
-        <li><code>ApplVer</code>, (required) The application version number - useful for debugging</li>
-        <li><code>CustomID</code>, Any custom ID to help the client differentiate the requests - will be included in the response</li>
-        <li><code>Token</code>, (required) The OnTime Group Calendar token</li>
-        <li><code>Items</code>, Semicolon separated list of items to return for each user. Blank fetches all.</li>
-        <li><code>Type</code>, Only return a specific type of users. Default is 0 meaning both users (1), rooms (2) and resources (3)</li>
+        <li><code>msg.payload.UsersAll.Items</code>, Semicolon separated list of items to return for each user. Blank fetches all.</li>
+        <li><code>msg.payload.UsersAll.Type</code>, Only return a specific type of users. Default is 0 meaning both users (1), rooms (2) and resources (3)</li>
+        <li><code>msg.payload.UsersAll.ExcludeIDs</code>, Semicolon separated list of user IDs to exclude</li>
+        <li><code>msg.payload.Main.CustomID</code>, Any custom ID to help the client differentiate the requests - will be included in the response</li>
     </ul>
     The output message contains the following properties:
     <ul>
@@ -117,6 +80,8 @@
 	    <ul>
 	        <li><code>Status</code> "OK" or "ERROR"</li>
 	        <li><code>Token</code></li>
+	        <li><code>UsersAll</code></li>
+	        <li><code>CustomID</code> When request include custom ID, response include custom ID.</li>
 	    </ul>
     </ul>
 </script>
@@ -127,18 +92,11 @@
         color:"rgb(253, 184, 19)",
         defaults: {
             name: {value:""},
-            host:{value:""},
-            APIVer:{value:"use"},
-            ApplID:{value:""},
-            ApplVer:{value:""},
             CustomID:{value:""},
             Items:{value:"ID;Name;Email"},
             Type:{value:"0"},
+            ExcludeIDs:{value:""},
             tls: {type:"tls-config",required: false}
-        },
-        credentials: {
-            user: {type:"text"},
-            password: {type: "password"}
         },
         inputs:1,
         outputs:1,
@@ -151,22 +109,6 @@
         },
 
         oneditprepare: function() {
-            $("#node-input-useAuth").change(function() {
-                if ($(this).is(":checked")) {
-                    $(".node-input-useAuth-row").show();
-                } else {
-                    $(".node-input-useAuth-row").hide();
-                    $('#node-input-user').val('');
-                    $('#node-input-password').val('');
-                }
-            });
-            if (this.credentials.user || this.credentials.has_password) {
-                $('#node-input-useAuth').prop('checked', true);
-            } else {
-                $('#node-input-useAuth').prop('checked', false);
-            }
-            $("#node-input-useAuth").change();
-
             function updateTLSOptions() {
                 if ($("#node-input-usetls").is(':checked')) {
                     $("#node-row-tls").show();

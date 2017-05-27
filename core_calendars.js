@@ -35,8 +35,6 @@ module.exports = function(RED) {
     	RED.nodes.createNode(this,n);
         var node = this;
         var nodeName = n.name;
-		var nodeUrl = "";
-        var nodeHost = "";
 		var nodeCustomID = n.CustomID;
 		var nodeIDs = n.IDs;					// param
 		var nodeEmails = n.Emails;				// param
@@ -70,7 +68,7 @@ module.exports = function(RED) {
 			var ApplVer = util.getOGCParameter("", msg, "ApplVer");
 			var Token = util.getOGCParameter("", msg, "Token");
 			var CustomID = util.getOGCParameter(nodeCustomID, msg, "CustomID");
-			
+						
 			var IDs = util.getParameterArray(nodeIDs, msg, operationKey, "IDs");							// param: IDs
 			var Emails = util.getParameterArray(nodeEmails, msg, operationKey, "Emails");					// param: Emails
 			var ShortNames = util.getParameterArray(nodeShortNames, msg, operationKey, "ShortNames");		// param: ShortNames
@@ -78,28 +76,14 @@ module.exports = function(RED) {
 			var FromDT = util.getParameterString(nodeFromDT, msg, operationKey, "FromDT");					// param: FromDT
 			var ToDT = util.getParameterString(nodeToDT, msg, operationKey, "ToDT");						// param: ToDT
 			
+			// set host
 			msg.host = host;
+			// set Main Parameters
+			if (toString.call(msg.payload) !== "[object Object]") { msg.payload = {}; }
+			msg.payload.Main = util.getMainParameters(APIVer, ApplID, ApplVer, CustomID, Token);
+			// set OGC Parameters
+			msg.OGCParameters = util.getOGCParameters(APIVer, ApplID, ApplVer, CustomID, Token);
 			
-			// Set msg.payload.Main
-			if (toString.call(msg.payload) === "[object Object]") {
-				if (toString.call(msg.payload.Main) === "[object Object]") {
-				} else {
-					msg.payload.Main = {};
-				}
-			} else {
-				msg.payload = {
-					"Main":{}
-				};
-			}
-			msg.payload.Main.APIVer = APIVer;
-			msg.payload.Main.ApplID = ApplID;
-			msg.payload.Main.ApplVer = ApplVer;
-			msg.payload.Main.Token = Token;
-			if (CustomID === "") {
-				delete msg.payload.Main["CustomID"];
-			} else {
-				msg.payload.Main.CustomID = CustomID;
-			}
 			// operation
 			if (toString.call(msg.payload[operationKey]) === "[object Object]") {
 				if (toString.call(msg.payload[operationKey].IDs) !== "[object Array]") {msg.payload[operationKey].IDs = [];}
@@ -116,39 +100,18 @@ module.exports = function(RED) {
 			msg.payload[operationKey].ShortNames = ShortNames;
 			msg.payload[operationKey].DNs = DNs;
 			msg.payload[operationKey].FromDT = FromDT;
-			msg.payload[operationKey].ToDT = ToDT;
+			msg.payload[operationKey].ToDT = ToDT;			
 			
-			// Set msg.OGCParameters.Main
-			if (toString.call(msg.OGCParameters) === "[object Object]") {
-				if (toString.call(msg.OGCParameters.Main) === "[object Object]") {
-					//
-				} else {
-					msg.OGCParameters.Main = {};
-				}
-			} else {
-				msg.OGCParameters = {
-					"Main":{}
-				};
-			}
-			msg.OGCParameters.Main.APIVer = APIVer;
-			msg.OGCParameters.Main.ApplID = ApplID;
-			msg.OGCParameters.Main.ApplVer = ApplVer;
-			msg.OGCParameters.Main.Token = Token;
-			if (CustomID === "") {
-				delete msg.OGCParameters.Main["CustomID"];
-			} else {
-				msg.OGCParameters.Main.CustomID = CustomID;
-			}
+            // url
+			var apiPath = "apihttp/";
+            var url = encodeURI(util.setSlash( host ) + apiPath);
 			
 			// delete object
 			delete msg["headers"];
 			delete msg.payload["Status"];
 			delete msg.payload["Token"];
 			
-            // API
-			var apiPath = "apihttp/";
-            var url = encodeURI(util.setSlash( host ) + apiPath);
-			
+			// debug
 	        util.log(DEBUG, "----------" + nodeName + "----------");
 			util.log(DEBUG, msg);
 	        util.log(DEBUG, "------------------------------");

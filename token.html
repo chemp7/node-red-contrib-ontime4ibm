@@ -47,7 +47,7 @@
     </div>
 
     <div class="form-row">
-	    <label for="node-input-CustomID"><i class="fa fa-tag"></i> CustomID</label>
+	    <label for="node-input-CustomID"><i class="fa fa-bookmark"></i> CustomID</label>
         <input type="text" id="node-input-CustomID" placeholder="e.g. 1234567890">
     </div>
 
@@ -91,11 +91,11 @@
     <p>Endpoint: Token (APIVer 7)</p>
     <p>This endpoint requires that the user is authenticated and is used to obtain an OnTime Group Calendar token for use in subsequent requests to the apihttp endpoint.</p>
     <ul>
-        <li><code>host</code> is a domino server.</li>
-        <li><code>APIVer</code>, (required) The version of the API you are using</li>
-        <li><code>ApplID</code>, (required) Application ID - must be present in the license key</li>
-        <li><code>ApplVer</code>, (required) The application version number - useful for debugging</li>
-        <li><code>CustomID</code>, This token node does not use CustomID. This CustomID is used in subsequent nodes.</li>
+        <li><code>msg.host</code> is a domino server.</li>
+        <li><code>msg.payload.Main.APIVer</code>, (required) The version of the API you are using</li>
+        <li><code>msg.payload.Main.ApplID</code>, (required) Application ID - must be present in the license key</li>
+        <li><code>msg.payload.Main.ApplVer</code>, (required) The application version number - useful for debugging</li>
+        <li><code>msg.payload.Main.CustomID</code>, This token node does not use CustomID. This CustomID is used in subsequent nodes.</li>
     </ul>
     The output message contains the following properties:
     <ul>
@@ -110,7 +110,7 @@
 <script type="text/javascript">
     RED.nodes.registerType('token',{
         category: 'Group calendar',
-        color:"rgb(253, 184, 19)",
+        color:"rgb(0, 135, 201)",
         defaults: {
             name: {value:""},
             host:{value:""},

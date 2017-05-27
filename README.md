@@ -36,6 +36,10 @@ It is possible to access easy to Ontime Group Calendar by use by the node that i
 * core calendars
   - Alle calendar entries for specific users for a given time range.
 
+* extended
+  - Set the operation and parameters in this node ahead.
+  - This node automatically sets ApplID, ApplVer, APIVer, CustomID, Token.
+
 
 ## Install
 

@@ -35,8 +35,15 @@ module.exports = function(RED) {
     	RED.nodes.createNode(this,n);
         var node = this;
         var nodeName = n.name;
+		var nodeUrl = "";
+        var nodeHost = "";
 		var nodeCustomID = n.CustomID;
-		var operationKey = "Version";
+		var nodeIDs = n.IDs;					// param
+		var nodeEmails = n.Emails;				// param
+		var nodeShortNames = n.ShortNames;		// param
+		var nodeDNs = n.DNs;					// param
+		var nodeFromDT = n.FromDT;				// param
+		var nodeToDT = n.ToDT;					// param
         if (n.tls) {
             var tlsNode = RED.nodes.getNode(n.tls);
         }
@@ -71,9 +78,6 @@ module.exports = function(RED) {
 			// set OGC Parameters
 			msg.OGCParameters = util.getOGCParameters(APIVer, ApplID, ApplVer, CustomID, Token);
 			
-			// operation
-			msg.payload[operationKey] = {};
-			
             // url
 			var apiPath = "apihttp/";
             var url = encodeURI(util.setSlash( host ) + apiPath);
@@ -85,7 +89,6 @@ module.exports = function(RED) {
 			
 			// debug
 	        util.log(DEBUG, "----------" + nodeName + "----------");
-			util.log("url", url);
 			util.log(DEBUG, msg);
 	        util.log(DEBUG, "------------------------------");
 			
@@ -97,6 +100,9 @@ module.exports = function(RED) {
 				return;
 			}
             
+            if (msg.url && nodeUrl && (nodeUrl !== msg.url)) {  // revert change below when warning is finally removed
+                node.warn(RED._("common.errors.nooverride"));
+            }
             if (!url) {
                 node.error(RED._("httpin.errors.no-url"),msg);
                 return;
@@ -253,7 +259,7 @@ module.exports = function(RED) {
         });
     }
     
-    RED.nodes.registerType("core version",HTTPRequest,{
+    RED.nodes.registerType("extened",HTTPRequest,{
 		
     });
 }

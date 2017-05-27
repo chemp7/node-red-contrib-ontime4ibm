@@ -37,86 +37,6 @@ module.exports = {
 		}
 		return v;
 	},
-	getUsersAllTypeParameter: function(nodeValue, msg, key) {
-		var v = "";
-		var toString = Object.prototype.toString;
-		if (nodeValue !== "") {
-			v = nodeValue;
-		} else if ((toString.call(msg.payload) === "[object Object]") && (toString.call(msg.payload.UsersAll) === "[object Object]") && (typeof msg.payload.UsersAll[key] !== "undefined")) {
-			v = msg.payload.UsersAll[key];
-		}
-		return v;
-	},
-	getUsersAllParameter: function(nodeValue, msg, key) {
-		var v = "";
-		var toString = Object.prototype.toString;
-		if (nodeValue !== "") {
-			v = nodeValue;
-		} else if ((toString.call(msg.payload) === "[object Object]") && (toString.call(msg.payload.UsersAll) === "[object Object]") && (typeof msg.payload.UsersAll[key] !== "undefined")) {
-			v = msg.payload.UsersAll[key];
-		}
-
-		if (toString.call(v) === "[object Array]") {
-			//
-		} else if (v.length === 0) {
-			v = [];
-		} else if ((v.match(/;/g)||[]).length === 0) {
-		 	v = [v];
-		} else {
-		 	v = v.split(";");
-		}
-		return v;
-	},
-	getUsersInfoParameter: function(nodeValue, msg, key) {
-		var v = "";
-		var toString = Object.prototype.toString;
-		if (nodeValue !== "") {
-			v = nodeValue;
-		} else if ((toString.call(msg.payload) === "[object Object]") && (toString.call(msg.payload.UsersInfo) === "[object Object]") && (typeof msg.payload.UsersInfo[key] !== "undefined")) {
-			v = msg.payload.UsersInfo[key];
-		}
-
-		if (toString.call(v) === "[object Array]") {
-			//
-		} else if (v.length === 0) {
-			v = [];
-		} else if ((v.match(/;/g)||[]).length === 0) {
-		 	v = [v];
-		} else {
-		 	v = v.split(";");
-		}
-		return v;
-	},
-	getCalendarsParameter: function(nodeValue, msg, key) {
-		var v = "";
-		var toString = Object.prototype.toString;
-		if (nodeValue !== "") {
-			v = nodeValue;
-		} else if ((toString.call(msg.payload) === "[object Object]") && (toString.call(msg.payload.Calendars) === "[object Object]") && (typeof msg.payload.Calendars[key] !== "undefined")) {
-			v = msg.payload.Calendars[key];
-		}
-
-		if (toString.call(v) === "[object Array]") {
-			//
-		} else if (v.length === 0) {
-			v = [];
-		} else if ((v.match(/;/g)||[]).length === 0) {
-		 	v = [v];
-		} else {
-		 	v = v.split(";");
-		}
-		return v;
-	},
-	getCalendarsDateTimeParameter: function(nodeValue, msg, key) {
-		var v = "";
-		var toString = Object.prototype.toString;
-		if (nodeValue !== "") {
-			v = nodeValue;
-		} else if ((toString.call(msg.payload) === "[object Object]") && (toString.call(msg.payload.Calendars) === "[object Object]") && (typeof msg.payload.Calendars[key] !== "undefined")) {
-			v = msg.payload.Calendars[key];
-		}
-		return v;
-	},
 	getParameterArray: function(nodeValue, msg, parentKey, key) {
 		var v = "";
 		var toString = Object.prototype.toString;
@@ -137,6 +57,24 @@ module.exports = {
 		}
 		return v;
 	},
+	getParameterNumber: function(nodeValue, msg, parentKey, key) {
+		var v = "";
+		var toString = Object.prototype.toString;
+		if (nodeValue !== "") {
+			v = nodeValue;
+		} else if ((toString.call(msg.payload) === "[object Object]") && (toString.call(msg.payload[parentKey]) === "[object Object]") && (typeof msg.payload[parentKey][key] !== "undefined")) {
+			v = msg.payload[parentKey][key];
+		}
+
+		if (toString.call(v) === "[object Number]") {
+			//
+		} else if (toString.call(v) === "[object String]") {
+			v = Number(v);
+		} else if (v.length === 0) {
+			v = 0;
+		}
+		return v;
+	},
 	getParameterString: function(nodeValue, msg, parentKey, key) {
 		var v = "";
 		var toString = Object.prototype.toString;
@@ -146,5 +84,33 @@ module.exports = {
 			v = msg.payload[parentKey][key];
 		}
 		return v;
+	},
+	getOGCParameters: function(apiver, applid, applver, customid, token) {
+		var obj = {
+			"Main":{
+				"APIVer":apiver,
+				"ApplID":applid,
+				"ApplVer":applver,
+				"Token":token
+			}
+		}
+		if (customid !== "") {
+			obj.Main.CustomID = customid;
+		}
+		return obj;
+	},
+	getMainParameters: function(apiver, applid, applver, customid, token) {
+		var obj = {
+			"APIVer":apiver,
+			"ApplID":applid,
+			"ApplVer":applver
+		}
+		if (token !== "") {
+			obj.Token = token;
+		}
+		if (customid !== "") {
+			obj.CustomID = customid;
+		}
+		return obj;
 	}
 };

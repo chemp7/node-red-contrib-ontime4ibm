@@ -35,12 +35,8 @@ module.exports = function(RED) {
     	RED.nodes.createNode(this,n);
         var node = this;
         var nodeName = n.name;
-        var nodeAPIVer = n.APIVer || "use";
-		var nodeUrl = n.url;
-        var nodeHost = n.host;
-        var nodeApplID = n.ApplID;
-		var nodeApplVer = n.ApplVer;
 		var nodeCustomID = n.CustomID;
+		var operationKey = "Logout";
         if (n.tls) {
             var tlsNode = RED.nodes.getNode(n.tls);
         }
@@ -54,97 +50,39 @@ module.exports = function(RED) {
         if (process.env.no_proxy != null) { noprox = process.env.no_proxy.split(","); }
         if (process.env.NO_PROXY != null) { noprox = process.env.NO_PROXY.split(","); }
         
-        util.log(DEBUG, "----------" + nodeName + "----------");
-		util.logWithLabel(DEBUG, "node: host", nodeHost);
-		util.logWithLabel(DEBUG, "node: APIVer", nodeAPIVer);
-		util.logWithLabel(DEBUG, "node: ApplID", nodeApplID);
-		util.logWithLabel(DEBUG, "node: ApplVer", nodeApplVer);
-		util.logWithLabel(DEBUG, "node: CustomID", nodeCustomID);
-        util.log(DEBUG, "------------------------------");
-        
         this.on("input",function(msg) {
             var preRequestTimestamp = process.hrtime();
             node.status({fill:"blue",shape:"dot",text:"httpin.status.requesting"});
             var method = "POST";
+			var toString = Object.prototype.toString;
 			
-            var host = nodeHost || ((typeof msg.host === "undefined") ? "" : msg.host);
-		    if (nodeAPIVer === "use"){
-        		nodeAPIVer = "";
-			}
-			var APIVer = Number(util.getOGCParameter(nodeAPIVer, msg, "APIVer"));
-			var ApplID = util.getOGCParameter(nodeApplID, msg, "ApplID");
-			var ApplVer = util.getOGCParameter(nodeApplVer, msg, "ApplVer");
+            var host = (typeof msg.host === "undefined") ? "" : msg.host;
+			var APIVer = Number(util.getOGCParameter("", msg, "APIVer"));
+			var ApplID = util.getOGCParameter("", msg, "ApplID");
+			var ApplVer = util.getOGCParameter("", msg, "ApplVer");
 			var Token = util.getOGCParameter("", msg, "Token");
 			var CustomID = util.getOGCParameter(nodeCustomID, msg, "CustomID");
 			
-	        util.log(DEBUG, "----------" + nodeName + "----------");
-			util.logWithLabel(DEBUG, "host", host);
-			util.logWithLabel(DEBUG, "APIVer", APIVer);
-			util.logWithLabel(DEBUG, "ApplID", ApplID);
-			util.logWithLabel(DEBUG, "ApplVer", ApplVer);
-			util.logWithLabel(DEBUG, "CustomID", CustomID);
-	        util.log(DEBUG, "------------------------------");
-			
-			// Set host
+			// set host
 			msg.host = host;
-			
-			var toString = Object.prototype.toString;
-			// Set msg.payload.Main
-			if (toString.call(msg.payload) === "[object Object]") {
-				util.log(DEBUG, "msg.payload: Object");
-				if (toString.call(msg.payload.Main) === "[object Object]") {
-					util.log(DEBUG, "msg.payload.Main: Object");
-				} else {
-					util.log(DEBUG, "msg.payload.Main: Not object");
-					msg.payload.Main = {};
-				}
-			} else {
-				util.log(DEBUG, "msg.payload: Not object");
-				msg.payload = {
-					"Main":{}
-				};
-			}
-			msg.payload.Main.APIVer = APIVer;
-			msg.payload.Main.ApplID = ApplID;
-			msg.payload.Main.ApplVer = ApplVer;
-			msg.payload.Main.Token = Token;
-			if (CustomID === "") {
-				delete msg.payload.Main["CustomID"];
-			} else {
-				msg.payload.Main.CustomID = CustomID;
-			}
-			msg.payload.Logout = {};	// Operation
-			
-			// Set msg.OGCParameters.Main
-			if (toString.call(msg.OGCParameters) === "[object Object]") {
-				if (toString.call(msg.OGCParameters.Main) === "[object Object]") {
-					//
-				} else {
-					msg.OGCParameters.Main = {};
-				}
-			} else {
-				msg.OGCParameters = {
-					"Main":{}
-				};
-			}
-			msg.OGCParameters.Main.APIVer = APIVer;
-			msg.OGCParameters.Main.ApplID = ApplID;
-			msg.OGCParameters.Main.ApplVer = ApplVer;
-			msg.OGCParameters.Main.Token = Token;
-			if (CustomID === "") {
-				delete msg.OGCParameters.Main["CustomID"];
-			} else {
-				msg.OGCParameters.Main.CustomID = CustomID;
-			}
-			
-			delete msg["headers"];
-			delete msg.payload["Status"];
-			delete msg.payload["Token"];
+			// set Main Parameters
+			if (toString.call(msg.payload) !== "[object Object]") { msg.payload = {}; }
+			msg.payload.Main = util.getMainParameters(APIVer, ApplID, ApplVer, CustomID, Token);
+			// set OGC Parameters
+			msg.OGCParameters = util.getOGCParameters(APIVer, ApplID, ApplVer, CustomID, Token);
+			// operation
+			msg.payload[operationKey] = {};
 			
             // API
 			var apiPath = "apihttp/";
             var url = encodeURI(util.setSlash( host ) + apiPath);
 			
+			// delete object
+			delete msg["headers"];
+			delete msg.payload["Status"];
+			delete msg.payload["Token"];
+			
+			// debug
 	        util.log(DEBUG, "----------" + nodeName + "----------");
 			util.log("url", url);
 			util.log(DEBUG, msg);
@@ -158,9 +96,6 @@ module.exports = function(RED) {
 				return;
 			}
             
-            if (msg.url && nodeUrl && (nodeUrl !== msg.url)) {  // revert change below when warning is finally removed
-                node.warn(RED._("common.errors.nooverride"));
-            }
             if (!url) {
                 node.error(RED._("httpin.errors.no-url"),msg);
                 return;
@@ -193,12 +128,6 @@ module.exports = function(RED) {
                         opts.headers[name] = msg.headers[v];
                     }
                 }
-            }
-            if (this.credentials && this.credentials.user) {
-                opts.auth = this.credentials.user+":"+(this.credentials.password||"");
-            }
-            if (this.credentials && this.credentials.user) {
-                opts.auth = this.credentials.user+":"+(this.credentials.password||"");
             }
             var payload = null;
 
@@ -324,9 +253,6 @@ module.exports = function(RED) {
     }
     
     RED.nodes.registerType("core logout",HTTPRequest,{
-        credentials: {
-            user: {type:"text"},
-            password: {type: "password"}
-        }
+		
     });
 }

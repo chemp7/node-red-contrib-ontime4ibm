@@ -35,14 +35,11 @@ module.exports = function(RED) {
     	RED.nodes.createNode(this,n);
         var node = this;
         var nodeName = n.name;
-        var nodeAPIVer = n.APIVer || "use";
-		var nodeUrl = n.url;
-        var nodeHost = n.host;
-        var nodeApplID = n.ApplID;
-		var nodeApplVer = n.ApplVer;
 		var nodeCustomID = n.CustomID;
 		var nodeItems = n.Items;			// param
 		var nodeType = n.Type || "use"		// param
+		var nodeExcludeIDs = n.ExcludeIDs	// param
+		var operationKey = "UsersAll";
         if (n.tls) {
             var tlsNode = RED.nodes.getNode(n.tls);
         }
@@ -62,92 +59,47 @@ module.exports = function(RED) {
             var method = "POST";
 			var toString = Object.prototype.toString;
 			
-            var host = nodeHost || ((typeof msg.host === "undefined") ? "" : msg.host);
-		    if (nodeAPIVer === "use"){
-        		nodeAPIVer = "";
-			}
-			var APIVer = Number(util.getOGCParameter(nodeAPIVer, msg, "APIVer"));
-			var ApplID = util.getOGCParameter(nodeApplID, msg, "ApplID");
-			var ApplVer = util.getOGCParameter(nodeApplVer, msg, "ApplVer");
+            var host = (typeof msg.host === "undefined") ? "" : msg.host;
+			var APIVer = Number(util.getOGCParameter("", msg, "APIVer"));
+			var ApplID = util.getOGCParameter("", msg, "ApplID");
+			var ApplVer = util.getOGCParameter("", msg, "ApplVer");
 			var Token = util.getOGCParameter("", msg, "Token");
 			var CustomID = util.getOGCParameter(nodeCustomID, msg, "CustomID");
 			
-			var Items = util.getUsersAllParameter(nodeItems, msg, "Items");				// param: Items
-		    if (nodeType === "use"){
-        		nodeType = "";
-			}
-			var Type = util.getUsersAllTypeParameter(nodeType, msg, "Type");				// param: Type
+			var Items = util.getParameterArray(nodeItems, msg, "Items");				// param: Items
+		    if (nodeType === "use"){ nodeType = ""; }
+			var Type = util.getParameterNumber(nodeType, msg, "Type");					// param: Type
+			var ExcludeIDs = util.getParameterArray(nodeExcludeIDs, msg, "ExcludeIDs");	// param: ExcludeIDs
 			
-			// Set host
+			// set host
 			msg.host = host;
+			// set Main Parameters
+			if (toString.call(msg.payload) !== "[object Object]") { msg.payload = {}; }
+			msg.payload.Main = util.getMainParameters(APIVer, ApplID, ApplVer, CustomID, Token);
+			// set OGC Parameters
+			msg.OGCParameters = util.getOGCParameters(APIVer, ApplID, ApplVer, CustomID, Token);
 			
-			// Set msg.payload.Main
-			if (toString.call(msg.payload) === "[object Object]") {
-				if (toString.call(msg.payload.Main) === "[object Object]") {
-				} else {
-					msg.payload.Main = {};
-				}
-			} else {
-				msg.payload = {
-					"Main":{}
-				};
-			}
-			msg.payload.Main.APIVer = APIVer;
-			msg.payload.Main.ApplID = ApplID;
-			msg.payload.Main.ApplVer = ApplVer;
-			msg.payload.Main.Token = Token;
-			if (CustomID === "") {
-				delete msg.payload.Main["CustomID"];
-			} else {
-				msg.payload.Main.CustomID = CustomID;
-			}
 			// Operation
-			// UsersAll parameters
-			if (toString.call(msg.payload.UsersAll) === "[object Object]") {
-				if (toString.call(msg.payload.UsersAll.Items) !== "[object Array]") {msg.payload.UsersAll.Items = [];}
-				if (toString.call(msg.payload.UsersAll.ExcludeIDs) !== "[object Array]") {msg.payload.UsersAll.ExcludeIDs = [];}
-				if (toString.call(msg.payload.UsersAll.Type) === "[object Number]") {
-					msg.payload.UsersAll.Type = Type;
-				} else if (toString.call(msg.payload.UsersAll.Type) === "[object String]") {
-					msg.payload.UsersAll.Type = Number(Type);
-				} else {
-					msg.payload.UsersAll.Type = 0;
-				}
+			if (toString.call(msg.payload[operationKey]) === "[object Object]") {
+				if (toString.call(msg.payload[operationKey].Items) !== "[object Array]") {msg.payload[operationKey].Items = [];}
+				if (toString.call(msg.payload[operationKey].ExcludeIDs) !== "[object Array]") {msg.payload[operationKey].ExcludeIDs = [];}
 			} else {
-				msg.payload.UsersAll = {};
+				msg.payload[operationKey] = {};
 			}
-			msg.payload.UsersAll.Items = Items;
+			msg.payload[operationKey].Items = Items;
+			msg.payload[operationKey].ExcludeIDs = ExcludeIDs;
+			msg.payload[operationKey].Type = Type;
 			
-			// Set msg.OGCParameters.Main
-			if (toString.call(msg.OGCParameters) === "[object Object]") {
-				if (toString.call(msg.OGCParameters.Main) === "[object Object]") {
-					//
-				} else {
-					msg.OGCParameters.Main = {};
-				}
-			} else {
-				msg.OGCParameters = {
-					"Main":{}
-				};
-			}
-			msg.OGCParameters.Main.APIVer = APIVer;
-			msg.OGCParameters.Main.ApplID = ApplID;
-			msg.OGCParameters.Main.ApplVer = ApplVer;
-			msg.OGCParameters.Main.Token = Token;
-			if (CustomID === "") {
-				delete msg.OGCParameters.Main["CustomID"];
-			} else {
-				msg.OGCParameters.Main.CustomID = CustomID;
-			}
+            // url
+			var apiPath = "apihttp/";
+            var url = encodeURI(util.setSlash( host ) + apiPath);
 			
+			// delete object
 			delete msg["headers"];
 			delete msg.payload["Status"];
 			delete msg.payload["Token"];
 			
-            // API
-			var apiPath = "apihttp/";
-            var url = encodeURI(util.setSlash( host ) + apiPath);
-			
+			// debug
 	        util.log(DEBUG, "----------" + nodeName + "----------");
 			util.log(DEBUG, msg);
 	        util.log(DEBUG, "------------------------------");
@@ -160,9 +112,6 @@ module.exports = function(RED) {
 				return;
 			}
             
-            if (msg.url && nodeUrl && (nodeUrl !== msg.url)) {  // revert change below when warning is finally removed
-                node.warn(RED._("common.errors.nooverride"));
-            }
             if (!url) {
                 node.error(RED._("httpin.errors.no-url"),msg);
                 return;
@@ -195,12 +144,6 @@ module.exports = function(RED) {
                         opts.headers[name] = msg.headers[v];
                     }
                 }
-            }
-            if (this.credentials && this.credentials.user) {
-                opts.auth = this.credentials.user+":"+(this.credentials.password||"");
-            }
-            if (this.credentials && this.credentials.user) {
-                opts.auth = this.credentials.user+":"+(this.credentials.password||"");
             }
             var payload = null;
 
@@ -326,9 +269,6 @@ module.exports = function(RED) {
     }
     
     RED.nodes.registerType("core usersall",HTTPRequest,{
-        credentials: {
-            user: {type:"text"},
-            password: {type: "password"}
-        }
+		
     });
 }
