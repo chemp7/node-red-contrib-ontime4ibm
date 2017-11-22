@@ -1,16 +1,16 @@
 {
-  "name": "node-red-ogc",
+  "name": "node-red-contrib-ontime4ibm",
   "version": "0.0.1",
-  "description": "This collection of Node-RED nodes is for OnTime Group Calendar API.",
+  "description": "This collection of Node-RED nodes is for Ontime Group Calendar on domino server.",
   "author": "Takeshi Yoshida",
   "bugs": {
-    "url": "https://github.com/chemp7/node-red-ontime-group-calendar/issues"
+    "url": "https://github.com/chemp7/node-red-contrib-ontime4ibm/issues"
   },
   "license": "MIT",
-  "homepage": "https://github.com/chemp7/node-red-ontime-group-calendar#readme",
+  "homepage": "https://github.com/chemp7/node-red-contrib-ontime4ibm/blob/master/README.md",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chemp7/node-red-ogc.git"
+    "url": "https://github.com/chemp7/node-red-contrib-ontime4ibm"
   },
   "keywords": [ "node-red" ],
   "node-red": {

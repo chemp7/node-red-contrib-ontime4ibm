@@ -1,5 +1,8 @@
 # node-red-contrib-ontime4ibm
 
+![Version: 0.0.1](https://img.shields.io/badge/Version-0.0.1-green.svg)
+
+
 ## Overview
 
 This collection of Node-RED nodes is for Ontime Group Calendar on domino server.
@@ -60,6 +63,6 @@ This software includes the work that is distributed in the Apache License 2.0
 
 ## Releace
 
-2017/11/22 v0.0.2 fix
+2017/11/22 v0.0.1 Initial
 
-2017/05/07 v0.0.1 Initial
+2017/05/07 alpha
