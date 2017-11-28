@@ -43,7 +43,7 @@ module.exports = function(RED) {
     var mustache = require("mustache");
     var querystring = require("querystring");
     var util = require("./util");
-    var DEBUG = false;
+    var DEBUG = true;
 
     function HTTPRequest(n) {
     	RED.nodes.createNode(this,n);
@@ -84,15 +84,15 @@ module.exports = function(RED) {
 			var ApplVer = util.getOGCParameter("", msg, "ApplVer");
 			var Token = util.getOGCParameter("", msg, "Token");
 			var CustomID = util.getOGCParameter(nodeCustomID, msg, "CustomID");
-			
-			var Any = util.getParameterArray(nodeAny, msg, "Any");						// param: Any
-			var IDs = util.getParameterArray(nodeIDs, msg, "IDs");						// param: IDs
-			var Emails = util.getParameterArray(nodeEmails, msg, "Emails");				// param: Emails
-			var ShortNames = util.getParameterArray(nodeShortNames, msg, "ShortNames");	// param: ShortNames
-			var DNs = util.getParameterArray(nodeDNs, msg, "DNs");						// param: DNs
-			var Groups = util.getParameterArray(nodeGroups, msg, "Groups");				// param: Groups
-			var ExcludeIDs = util.getParameterArray(nodeExcludeIDs, msg, "ExcludeIDs");	// param: ExcludeIDs
-			var Items = util.getParameterArray(nodeItems, msg, "Items");				// param: Items
+            
+			var Any = util.getParameterArray(nodeAny, msg, operationKey, "Any");						// param: Any
+			var IDs = util.getParameterArray(nodeIDs, msg, operationKey, "IDs");						// param: IDs
+			var Emails = util.getParameterArray(nodeEmails, msg, operationKey, "Emails");				// param: Emails
+			var ShortNames = util.getParameterArray(nodeShortNames, msg, operationKey, "ShortNames");	// param: ShortNames
+			var DNs = util.getParameterArray(nodeDNs, msg, operationKey, "DNs");						// param: DNs
+			var Groups = util.getParameterArray(nodeGroups, msg, operationKey, "Groups");				// param: Groups
+			var ExcludeIDs = util.getParameterArray(nodeExcludeIDs, msg, operationKey, "ExcludeIDs");	// param: ExcludeIDs
+			var Items = util.getParameterArray(nodeItems, msg, operationKey, "Items");		    		// param: Items
 			
 			// set host
 			msg.host = host;

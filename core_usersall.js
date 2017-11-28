@@ -80,10 +80,10 @@ module.exports = function(RED) {
 			var Token = util.getOGCParameter("", msg, "Token");
 			var CustomID = util.getOGCParameter(nodeCustomID, msg, "CustomID");
 			
-			var Items = util.getParameterArray(nodeItems, msg, "Items");				// param: Items
+			var Items = util.getParameterArray(nodeItems, msg, operationKey,"Items");	    			// param: Items
 		    if (nodeType === "use"){ nodeType = ""; }
-			var Type = util.getParameterNumber(nodeType, msg, "Type");					// param: Type
-			var ExcludeIDs = util.getParameterArray(nodeExcludeIDs, msg, "ExcludeIDs");	// param: ExcludeIDs
+			var Type = util.getParameterNumber(nodeType, msg, operationKey, "Type");					// param: Type
+			var ExcludeIDs = util.getParameterArray(nodeExcludeIDs, msg, operationKey, "ExcludeIDs");	// param: ExcludeIDs
 			
 			// set host
 			msg.host = host;
