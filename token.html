@@ -104,11 +104,16 @@
     </ul>
     The output message contains the following properties:
     <ul>
-        <li><code>payload</code> is the body of the response</li>
+        <li><code>msg.ontime</code></li>
 	    <ul>
-	        <li><code>Status</code> "OK" or "ERROR"</li>
-	        <li><code>Token</code></li>
-	    </ul>
+	        <li><code>parameters</code>, Parameters for use on the next node.</li>
+	        <li><code>request</code> is the JSON that you requested to the OnTime API.</li>
+	        <li><code>response</code> is the body of the response.</li>
+            <ul>
+                <li><code>Status</code> "OK" or "ERROR"</li>
+                <li><code>Token</code></li>
+            </ul>
+        </ul>
     </ul>
 </script>
 

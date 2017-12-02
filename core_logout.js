@@ -82,10 +82,16 @@ module.exports = function(RED) {
 			// set Main Parameters
 			if (toString.call(msg.payload) !== "[object Object]") { msg.payload = {}; }
 			msg.payload.Main = util.getMainParameters(APIVer, ApplID, ApplVer, CustomID, Token);
-			// set OGC Parameters
-			msg.OGCParameters = util.getOGCParameters(APIVer, ApplID, ApplVer, CustomID, Token);
+            // set OnTime Parameters
+            if ((toString.call(msg.ontime) !== "[object Object]")) {
+                msg.ontime = {};
+            }
+            msg.ontime.parameters = util.getOGCParameters(APIVer, ApplID, ApplVer, CustomID, Token);
+            
 			// operation
-			msg.payload[operationKey] = {};
+            msg.payload[operationKey] = {};
+
+            msg.ontime.request = msg.payload;
 			
             // API
 			var apiPath = "apihttp/";
@@ -230,12 +236,17 @@ module.exports = function(RED) {
                     }
                     else if (node.ret === "obj") {
                         try {
-                             msg.payload = JSON.parse(msg.payload);
-                        	if (msg.payload.Status === "OK") {
-                        		msg.OGCParameters.Main.Token = msg.payload.Token;	// Response
-                        	}
-                        }
-                        catch(e) { node.warn(RED._("httpin.errors.json-error")); }
+                            msg.payload = JSON.parse(msg.payload);
+                            if (msg.payload.Status === "OK") {
+                                // Response
+                                delete msg.headers;
+                                delete msg.statusCode;
+                                msg.ontime.parameters.Main.Token = msg.payload.Token;
+                                msg.ontime.response = msg.payload;
+                                msg.payload = {};
+                            }
+                       }
+                       catch(e) { node.warn(RED._("httpin.errors.json-error")); }
                     }
                     node.send(msg);
                     node.status({});

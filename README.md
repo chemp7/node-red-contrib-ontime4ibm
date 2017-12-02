@@ -16,10 +16,20 @@ It is possible to access easy to Ontime Group Calendar by use by the node that i
 
 ## Node
 
-**token**
+OnTime uses the Token API to obtain the Token.
+It is necessary to request operation by using that Token.
+The nodes of this package stores Token in **msg.ontime.parameters**.
+If necessary, obtain or update the Token.
+Users do not need to manage Token.
+
+
+**Token**
 
 * token
   - This node requires that the user is authenticated and is used to obtain an OnTime Group Calendar token for use in subsequent requests to the apihttp endpoint.
+
+
+**Core**
 
 * core login
   - Used to verify the token.
@@ -39,6 +49,9 @@ It is possible to access easy to Ontime Group Calendar by use by the node that i
 * core calendars
   - Alle calendar entries for specific users for a given time range.
 
+
+**Extended**
+
 * extended
   - Set the operation and parameters in this node ahead.
   - This node automatically sets ApplID, ApplVer, APIVer, CustomID, Token.
@@ -46,7 +59,9 @@ It is possible to access easy to Ontime Group Calendar by use by the node that i
 
 ## Install
 
-Download from github.
+Run the following command in the root directory of your Node-RED install.
+
+        npm install node-red-contrib-ontime4ibm
 
 
 ## Licence
@@ -63,7 +78,12 @@ This software includes the work that is distributed in the Apache License 2.0
 
 ## Releace
 
-2017/12/02 v0.0.5 bug fix
+2017/12/02 v0.0.5 Specification change
+- The output destination of the response from the OnTime API has been changed from **msg.payload** to **msg.ontime.response**.
+- The key name was changed from **msg.OGCParameters** to **msg.ontime.parameters**.
+- Added **msg.ontime.response**: This is a response from the OnTime API.
+- Added **msg.ontime.request**: This is a contents requested to OnTime API.
+- Deleted **msg.headers** and **msg.statusCode** from output **msg**.
 
 2017/12/02 v0.0.4 bug fix
 

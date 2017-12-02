@@ -99,8 +99,11 @@ module.exports = function(RED) {
 			// set Main Parameters
 			if (toString.call(msg.payload) !== "[object Object]") { msg.payload = {}; }
 			msg.payload.Main = util.getMainParameters(APIVer, ApplID, ApplVer, CustomID, Token);
-			// set OGC Parameters
-			msg.OGCParameters = util.getOGCParameters(APIVer, ApplID, ApplVer, CustomID, Token);
+            // set OnTime Parameters
+            if ((toString.call(msg.ontime) !== "[object Object]")) {
+                msg.ontime = {};
+            }
+			msg.ontime.parameters = util.getOGCParameters(APIVer, ApplID, ApplVer, CustomID, Token);
 			
 			// Operation
 			if (toString.call(msg.payload[operationKey]) === "[object Object]") {
@@ -123,7 +126,9 @@ module.exports = function(RED) {
 			msg.payload[operationKey].Groups = Groups;
 			msg.payload[operationKey].ExcludeIDs = ExcludeIDs;
 			msg.payload[operationKey].Items = Items;
-			
+            
+            msg.ontime.request = msg.payload;
+            
             // url
 			var apiPath = "apihttp/";
             var url = encodeURI(util.setSlash( host ) + apiPath);
@@ -266,12 +271,17 @@ module.exports = function(RED) {
                     }
                     else if (node.ret === "obj") {
                         try {
-                             msg.payload = JSON.parse(msg.payload);
-                        	if (msg.payload.Status === "OK") {
-                        		msg.OGCParameters.Main.Token = msg.payload.Token;	// Response
-                        	}
-                        }
-                        catch(e) { node.warn(RED._("httpin.errors.json-error")); }
+                            msg.payload = JSON.parse(msg.payload);
+                            if (msg.payload.Status === "OK") {
+                                // Response
+                                delete msg.headers;
+                                delete msg.statusCode;
+                                msg.ontime.parameters.Main.Token = msg.payload.Token;
+                                msg.ontime.response = msg.payload;
+                                msg.payload = {};
+                            }
+                       }
+                       catch(e) { node.warn(RED._("httpin.errors.json-error")); }
                     }
                     node.send(msg);
                     node.status({});

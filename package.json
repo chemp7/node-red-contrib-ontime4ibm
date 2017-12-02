@@ -6,7 +6,7 @@
   "bugs": {
     "url": "https://github.com/chemp7/node-red-contrib-ontime4ibm/issues"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "homepage": "https://github.com/chemp7/node-red-contrib-ontime4ibm/blob/master/README.md",
   "repository": {
     "type": "git",
