@@ -43,7 +43,7 @@ module.exports = function(RED) {
     var mustache = require("mustache");
     var querystring = require("querystring");
     var util = require("./util");
-    var DEBUG = true;
+    var DEBUG = false;
 
     function HTTPRequest(n) {
     	RED.nodes.createNode(this,n);

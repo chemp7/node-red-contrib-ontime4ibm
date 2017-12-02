@@ -1,6 +1,6 @@
 # node-red-contrib-ontime4ibm
 
-![Version: 0.0.4](https://img.shields.io/badge/Version-0.0.4-green.svg)
+![Version: 0.0.5](https://img.shields.io/badge/Version-0.0.5-green.svg)
 
 
 ## Overview
@@ -63,7 +63,9 @@ This software includes the work that is distributed in the Apache License 2.0
 
 ## Releace
 
-2017/11/22 v0.0.4 bug fix
+2017/12/02 v0.0.5 bug fix
+
+2017/12/02 v0.0.4 bug fix
 
 2017/11/22 v0.0.3 bug fix
 
