@@ -53,7 +53,8 @@ module.exports = function(RED) {
         var nodeHost = n.host;
         var nodeApplID = n.ApplID;
 		var nodeApplVer = n.ApplVer;
-		var nodeCustomID = n.CustomID;
+        var nodeCustomID = n.CustomID;
+        var nodeOutputMsg = n.outputmsg;
         if (n.tls) {
             var tlsNode = RED.nodes.getNode(n.tls);
         }
@@ -79,7 +80,7 @@ module.exports = function(RED) {
 			var ApplID = util.getOGCParameter(nodeApplID, msg, "ApplID");
 			var ApplVer = util.getOGCParameter(nodeApplVer, msg, "ApplVer");
 			var CustomID = util.getOGCParameter(nodeCustomID, msg, "CustomID");
-			
+
 			// set host
 			msg.host = host;
 			// set Main Parameters
@@ -89,14 +90,6 @@ module.exports = function(RED) {
             if ((toString.call(msg.ontime) !== "[object Object]")) {
                 msg.ontime = {};
             }
-            /*
-            if ((toString.call(msg.ontime.response) !== "[object Object]")) {
-                msg.ontime.response = {};
-            }
-            if ((toString.call(msg.ontime.request) !== "[object Object]")) {
-                msg.ontime.request = {};
-            }
-            */
             msg.ontime.parameters = util.getOGCParameters(APIVer, ApplID, ApplVer, CustomID, "");
             			
 			// operation (Token operation is "Main" parameter only.)
@@ -257,7 +250,9 @@ module.exports = function(RED) {
                                 delete msg.statusCode;
                                 msg.ontime.parameters.Main.Token = msg.payload.Token;
                                 msg.ontime.response = msg.payload;
-                                msg.payload = {};
+                                if (typeof nodeOutputMsg === "undefined" || nodeOutputMsg === false) {
+                                    msg.payload = {};
+                                }
                         	}
                         }
                         catch(e) { node.warn(RED._("httpin.errors.json-error")); }

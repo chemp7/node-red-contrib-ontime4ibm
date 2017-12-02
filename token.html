@@ -84,6 +84,11 @@
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
 
+    <div class="form-row">
+        <input type="checkbox" id="node-input-outputmsg" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-outputmsg" style="width: 90%;"> Include the response in msg.payload.</label>
+    </div>
+
     <div id="node-input-tip" class="form-tips">
         <p>This token node does not use CustomID.</p>
         <p>This CustomID is used in subsequent nodes.</p>
@@ -128,6 +133,7 @@
             ApplID:{value:""},
             ApplVer:{value:""},
             CustomID:{value:""},
+            outputmsg:{value:""},
             tls: {type:"tls-config",required: false}
         },
         credentials: {

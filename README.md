@@ -80,6 +80,7 @@ This software includes the work that is distributed in the Apache License 2.0
 
 2017/12/02 v0.0.5 Specification change
 - The output destination of the response from the OnTime API has been changed from **msg.payload** to **msg.ontime.response**.
+- If you need to include the response in **msg.payload**, please check the checkbox of "Include the response in msg.payload".
 - The key name was changed from **msg.OGCParameters** to **msg.ontime.parameters**.
 - Added **msg.ontime.response**: This is a response from the OnTime API.
 - Added **msg.ontime.request**: This is a contents requested to OnTime API.

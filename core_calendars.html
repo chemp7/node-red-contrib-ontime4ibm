@@ -76,6 +76,11 @@
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
 
+    <div class="form-row">
+        <input type="checkbox" id="node-input-outputmsg" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-outputmsg" style="width: 90%;"> Include the response in msg.payload.</label>
+    </div>
+
     <div class="form-tips" id="tip-json" hidden><span data-i18n="httpin.tip.req"></span></div>
 </script>
 
@@ -122,6 +127,7 @@
             FromDT:{value:""},
             ToDT:{value:""},
             CustomID:{value:""},
+            outputmsg:{value:""},
             tls: {type:"tls-config",required: false}
         },
         inputs:1,

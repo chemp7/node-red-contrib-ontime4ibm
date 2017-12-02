@@ -51,6 +51,7 @@ module.exports = function(RED) {
         var nodeName = n.name;
 		var nodeCustomID = n.CustomID;
 		var operationKey = "Version";
+        var nodeOutputMsg = n.outputmsg;
         if (n.tls) {
             var tlsNode = RED.nodes.getNode(n.tls);
         }
@@ -243,7 +244,9 @@ module.exports = function(RED) {
                                 delete msg.statusCode;
                                 msg.ontime.parameters.Main.Token = msg.payload.Token;
                                 msg.ontime.response = msg.payload;
-                                msg.payload = {};
+                                if (typeof nodeOutputMsg === "undefined" || nodeOutputMsg === false) {
+                                    msg.payload = {};
+                                }
                             }
                        }
                        catch(e) { node.warn(RED._("httpin.errors.json-error")); }
