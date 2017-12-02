@@ -42,8 +42,8 @@ module.exports = {
 			v = nodeValue;
 		} else if ((toString.call(msg.payload) === "[object Object]") && (toString.call(msg.payload.Main) === "[object Object]") && (typeof msg.payload.Main[key] !== "undefined")) {
 			v = msg.payload.Main[key];
-		} else if ((toString.call(msg.ontime) === "[object Object]") && (toString.call(msg.ontime.parameters) === "[object Object]") && (toString.call(msg.ontime.parameters.Main) === "[object Object]") && (typeof msg.ontime.parameters.Main[key] !== "undefined")) {
-			v = msg.ontime.parameters.Main[key];
+		} else if ((toString.call(msg.OGCParameters) === "[object Object]") && (toString.call(msg.OGCParameters.Main) === "[object Object]") && (typeof msg.OGCParameters.Main[key] !== "undefined")) {
+			v = msg.OGCParameters.Main[key];
 		}
 		return v;
 	},

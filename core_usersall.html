@@ -49,7 +49,7 @@
     <div class="form-row">
 	    <label for="node-input-Type"><i class="fa fa-object-group"></i> Type</label>
         <select type="text" id="node-input-Type" style="width:72%;">
-	        <option value="use">- set by msg.payload or msg.OGCParameters -</option>
+	        <option value="use">- set by msg object -</option>
         	<option value="0">0: All</option>
         	<option value="1">1: Users</option>
         	<option value="2">2: Rooms</option>
@@ -75,7 +75,7 @@
     <p>List of all users and their information.</p>
     <ul>
         <li><code>msg.payload.UsersAll.Items</code>, Semicolon separated list of items to return for each user. Blank fetches all.</li>
-        <li><code>msg.payload.UsersAll.Type</code>, Only return a specific type of users. Default is 0 meaning both users (1), rooms (2) and resources (3)</li>
+        <li><code>msg.payload.UsersAll.Type</code>, Only return a specific type of users. Default is 0 meaning both users (1), rooms (2) and resources (3). (Type: number)</li>
         <li><code>msg.payload.UsersAll.ExcludeIDs</code>, Semicolon separated list of user IDs to exclude</li>
         <li><code>msg.payload.Main.CustomID</code>, Any custom ID to help the client differentiate the requests - will be included in the response</li>
     </ul>
