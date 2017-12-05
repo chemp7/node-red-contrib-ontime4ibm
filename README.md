@@ -5,13 +5,13 @@
 
 ## Overview
 
-This collection of Node-RED nodes is for Ontime Group Calendar on domino server.
+This collection of Node-RED nodes is for OnTime Group Calendar on domino server.
 
 ## Description
 
 This package is created by modifying the http request Node.
-This package is support to Ontime Group Calendar API on domino server.
-It is possible to access easy to Ontime Group Calendar by use by the node that is included in this package.
+This package is support to OnTime Group Calendar API on domino server.
+It is possible to access easy to OnTime Group Calendar by use by the node that is included in this package.
 
 
 ## Node
