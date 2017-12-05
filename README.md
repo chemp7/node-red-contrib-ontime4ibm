@@ -23,53 +23,54 @@ If necessary, obtain or update the Token.
 Users do not need to manage Token.
 
 
-**Token**
+### Token
 
-* token
+- token
   - This node requires that the user is authenticated and is used to obtain an OnTime Group Calendar token for use in subsequent requests to the apihttp endpoint.
 
 
-**Core**
+### Core
 
-* core login
+- core login
   - Used to verify the token.
 
-* core logout
+- core logout
   - Tell the API that we're logging out. Not critical, more as good behavior and for logging.
 
-* core version
+- core version
   - Return some version information of API and running server.
 
-* core usersall
+- core usersall
   - List of all users and their information.
 
-* core usersinfo
+- core usersinfo
   - Information of specific users.
 
-* core calendars
+- core calendars
   - Alle calendar entries for specific users for a given time range.
 
 
-**Extended**
+### Extended
 
-* extended
+- extended
   - Set the operation and parameters in this node ahead.
   - This node automatically sets ApplID, ApplVer, APIVer, CustomID, Token.
 
-FreeRooms: Search for available rooms
+#### FreeRooms: Search for available rooms
 
-```html:example
-msg.payload = {
-  FreeRooms: {
-    StartDT: "2017-12-06T18:00:00Z", 
-    EndDT: "2017-12-06T19:00:00Z", 
-    Site: "Tokyo", 
-    Capacity: 4
-  }
-};
-```
+![Node-RED Flow](https://github.com/chemp7/node-red-contrib-ontime4ibm/blob/master/example/example01_node-red_flow.PNG)
+[Node-RED Flow](https://github.com/chemp7/node-red-contrib-ontime4ibm/blob/master/example/example01_image.json)
 
-  - Note: All dates shouldbeencodedas stringsin ISO8601 format usingthe UTC timezone. {YYYY}-{MM}-{dd}T{HH}:{mm}:{ss}Z
+    msg.payload = {
+      FreeRooms: {
+        StartDT: "2017-12-06T18:00:00Z", 
+        EndDT: "2017-12-06T19:00:00Z", 
+        Site: "Tokyo", 
+        Capacity: 4
+      }
+    };
+
+- **Note**: All dates shouldbeencodedas stringsin ISO8601 format usingthe UTC timezone. {YYYY}-{MM}-{dd}T{HH}:{mm}:{ss}Z
 
 
 ## Install
@@ -94,11 +95,13 @@ This software includes the work that is distributed in the Apache License 2.0
 ## Releace
 
 2017/12/02 v0.0.5 Specification change
-  - **Attention**: The output destination of the response from the OnTime API has been changed from **msg.payload** to **msg.ontime.response**. If you were using version 0.0.4 or earlier, update the node config. If you need to include the response in **msg.payload**, please check the checkbox of "Include the response in msg.payload".
-  - The key name was changed from **msg.OGCParameters** to **msg.ontime.parameters**.
-  - Added **msg.ontime.response**: This is a response from the OnTime API.
-  - Added **msg.ontime.request**: This is a contents requested to OnTime API.
-  - Deleted **msg.headers** and **msg.statusCode** from output **msg**.
+- **Attention**: The output destination of the response from the OnTime API has been changed from `msg.payload` to `msg.ontime.response`.
+  - If you were using version 0.0.4 or earlier, update the node config.
+  - If you need to include the response in `msg.payload`, please check the checkbox of "Include the response in msg.payload".
+- The key name was changed from `msg.OGCParameters` to `msg.ontime.parameters`.
+- Added `msg.ontime.response`: This is a response from the OnTime API.
+- Added `msg.ontime.request`: This is a contents requested to OnTime API.
+- Deleted `msg.headers` and `msg.statusCode` from output `msg`.
 
 2017/12/02 v0.0.4 bug fix
 
