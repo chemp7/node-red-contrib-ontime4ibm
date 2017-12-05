@@ -56,6 +56,21 @@ Users do not need to manage Token.
   - Set the operation and parameters in this node ahead.
   - This node automatically sets ApplID, ApplVer, APIVer, CustomID, Token.
 
+FreeRooms: Search for available rooms
+
+```html:example
+msg.payload = {
+  FreeRooms: {
+    StartDT: "2017-12-06T18:00:00Z", 
+    EndDT: "2017-12-06T19:00:00Z", 
+    Site: "Tokyo", 
+    Capacity: 4
+  }
+};
+```
+
+  - Note: All dates shouldbeencodedas stringsin ISO8601 format usingthe UTC timezone. {YYYY}-{MM}-{dd}T{HH}:{mm}:{ss}Z
+
 
 ## Install
 
@@ -79,12 +94,11 @@ This software includes the work that is distributed in the Apache License 2.0
 ## Releace
 
 2017/12/02 v0.0.5 Specification change
-- The output destination of the response from the OnTime API has been changed from **msg.payload** to **msg.ontime.response**.
-- If you need to include the response in **msg.payload**, please check the checkbox of "Include the response in msg.payload".
-- The key name was changed from **msg.OGCParameters** to **msg.ontime.parameters**.
-- Added **msg.ontime.response**: This is a response from the OnTime API.
-- Added **msg.ontime.request**: This is a contents requested to OnTime API.
-- Deleted **msg.headers** and **msg.statusCode** from output **msg**.
+  - **Attention**: The output destination of the response from the OnTime API has been changed from **msg.payload** to **msg.ontime.response**. If you were using version 0.0.4 or earlier, update the node config. If you need to include the response in **msg.payload**, please check the checkbox of "Include the response in msg.payload".
+  - The key name was changed from **msg.OGCParameters** to **msg.ontime.parameters**.
+  - Added **msg.ontime.response**: This is a response from the OnTime API.
+  - Added **msg.ontime.request**: This is a contents requested to OnTime API.
+  - Deleted **msg.headers** and **msg.statusCode** from output **msg**.
 
 2017/12/02 v0.0.4 bug fix
 
