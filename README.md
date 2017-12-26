@@ -99,14 +99,14 @@ This software includes the work that is distributed in the Apache License 2.0
   - If you were using version 0.0.4 or earlier, update the node config.
   - If you need to include the response in `msg.payload`, please check the checkbox of "Include the response in msg.payload".
 - The key name was changed from `msg.OGCParameters` to `msg.ontime.parameters`.
-- Added `msg.ontime.response`: This is a response from the OnTime API.
-- Added `msg.ontime.request`: This is a content requested to the OnTime API. However, it is in the state before escape to unicode.
-- Added `msg.ontime.requestOrigin`: This is a content actually requested to the OnTime API after escaping to unicode.
+- Added `msg.ontime.response`: This is the response from the OnTime API.
+- Added `msg.ontime.request`: This is the content required for the OnTime API. However, it is the state before encoding Unicode.
+- Added `msg.ontime.requestOrigin`: This is the content actually requested by the OnTime API after encoding Unicode.
 - Deleted `msg.headers` and `msg.statusCode` from output `msg`.
 
-2017/12/02 v0.0.4 bug fix
+2017/12/02 v0.0.4 hotfix
 
-2017/11/22 v0.0.3 bug fix
+2017/11/22 v0.0.3 hotfix
 
 2017/11/22 v0.0.2 fix
 
