@@ -108,11 +108,6 @@ module.exports = function(RED) {
 			delete msg.payload["Status"];
 			delete msg.payload["Token"];
 			
-			// debug
-	        util.log(DEBUG, "----------" + nodeName + "----------");
-			util.log(DEBUG, msg);
-	        util.log(DEBUG, "------------------------------");
-			
 			if (host === "") {
 				var errorparam = "";
 				errorparam = (host === "") ? errorparam + " host," : errorparam;
@@ -168,7 +163,8 @@ module.exports = function(RED) {
                     if (opts.headers['content-type'] == 'application/x-www-form-urlencoded') {
                         payload = querystring.stringify(msg.payload);
                     } else {
-                        payload = JSON.stringify(msg.payload);
+//                        payload = JSON.stringify(msg.payload);
+                        payload = util.escapeAfterStringify(msg.payload, true);
                         if (opts.headers['content-type'] == null) {
                             opts.headers[ctSet] = "application/json";
                         }
@@ -251,9 +247,12 @@ module.exports = function(RED) {
                                 delete msg.statusCode;
                                 msg.ontime.parameters.Main.Token = msg.payload.Token;
                                 msg.ontime.response = msg.payload;
+                                msg.ontime.requestOrigin = payload;
                                 if (typeof nodeOutputMsg === "undefined" || nodeOutputMsg === false) {
                                     msg.payload = {};
                                 }
+                                // debug
+                                util.log(DEBUG, msg);
                             }
                        }
                        catch(e) { node.warn(RED._("httpin.errors.json-error")); }

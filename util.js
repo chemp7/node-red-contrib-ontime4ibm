@@ -35,6 +35,14 @@ module.exports = {
     	}
     	return str;
 	},
+	escapeAfterStringify: function(str, flag_escape) {
+		var json = JSON.stringify(str);
+	   	return flag_escape ? json.replace(/[\u007f-\uffff]/g,
+			function(c) { 
+				return '\\u'+('0000'+c.charCodeAt(0).toString(16)).slice(-4);
+		  	}
+	   	): json;
+	},
 	getOGCParameter: function(nodeValue, msg, key) {
 		var v = "";
 		var toString = Object.prototype.toString;
