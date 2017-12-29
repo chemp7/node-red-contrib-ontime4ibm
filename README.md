@@ -101,7 +101,7 @@ This software includes the work that is distributed in the Apache License 2.0
 - The key name was changed from `msg.OGCParameters` to `msg.ontime.parameters`.
 - Added `msg.ontime.response`: This is the response from the OnTime API.
 - Added `msg.ontime.request`: This is the content required for the OnTime API. However, it is the state before encoding Unicode.
-- Added `msg.ontime.requestOrigin`: This is the content actually requested by the OnTime API after encoding Unicode.
+- Added `msg.ontime.requestEncoded`: This is the content actually requested by the OnTime API after encoding Unicode.
 - Deleted `msg.headers` and `msg.statusCode` from output `msg`.
 
 2017/12/02 v0.0.4 hotfix
